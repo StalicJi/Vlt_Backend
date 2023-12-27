@@ -13,6 +13,7 @@
                 :active="
                   item.children.some((child) => child.title === activeElement)
                 "
+                active-color="backgroundElement"
                 hover-color="textInverted"
                 class="hover:shadow-lg"
               >
@@ -33,6 +34,7 @@
                 :key="child.title"
                 :active="child.title === activeElement"
                 @click="activeElement = child.title"
+                active-color="backgroundElement"
                 hover-color="#000000"
               >
                 <VaSidebarItemContent>
@@ -48,6 +50,7 @@
             :key="item.title + 'item'"
             :active="item.title === activeElement"
             @click="activeElement = item.title"
+            active-color="backgroundElement"
             hover-color="textInverted"
             class="hover:shadow-lg"
           >
@@ -66,6 +69,10 @@
 
 <script setup>
 /* ------ SideBar列表------ */
+
+import { ref } from "vue";
+
+const activeElement = ref("專案統計");
 const items = [
   {
     title: "報表登入",
@@ -102,7 +109,7 @@ const items = [
     icon: "groups",
     children: [{ title: "維護" }, { title: "檢視" }],
   },
-  { title: "專案統計", icon: "dataset" },
+  { title: "專案統計", icon: "bar_chart" },
   {
     title: "個人設定",
     icon: "settings",

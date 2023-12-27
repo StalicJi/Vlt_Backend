@@ -3,11 +3,31 @@
 @tailwind utilities;
 
 @layer components {
+  /*** Flex  */
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .flex-btw {
+    @apply flex items-center justify-between;
+  }
+
+  /*** Shadow */
   .shadow-btm {
     box-shadow: rgba(0, 0, 0, 0.45) 0px 10px 20px -20px;
   }
   .shadow-r {
     box-shadow: rgba(136, 165, 191, 0.48) 6px 2px 16px 0px,
       rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;
+  }
+
+  /*** Header */
+  .header-btn {
+    @apply w-8 h-8 bg-gray-500 flex items-center justify-center rounded-full drop-shadow mr-2 cursor-pointer hover:bg-[#126992] ease-in duration-100;
+  }
+
+  /*** Button */
+  .default-btn {
+    @apply flex-center px-4 py-2 rounded-md drop-shadow cursor-pointer bg-gray-500  ease-in duration-100;
   }
 }
