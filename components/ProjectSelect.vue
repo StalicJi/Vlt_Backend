@@ -1,9 +1,9 @@
 <template>
   <div
-    class="border w-full h-28 bg-[#126992] rounded-md drop-shadow-sm py-2 px-4"
+    class="border w-full h-28 bg-[#126992] rounded-md drop-shadow-lg py-2 px-4"
   >
     <div class="flex-btw px-2">
-      <h1 class="text-white">專案選擇器</h1>
+      <p class="text-white">專案選擇器</p>
       <Button buttonText="查詢" />
     </div>
     <div class="mt-2 px-2">

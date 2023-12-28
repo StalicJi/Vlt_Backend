@@ -21,6 +21,7 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
-    "@vuestic/nuxt": "^1.0.18"
+    "@vuestic/nuxt": "^1.0.18",
+    "chart.js": "^4.4.1"
   }
 }
