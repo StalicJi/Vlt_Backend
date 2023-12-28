@@ -25,7 +25,7 @@
             <p
               class="flex-1 flex-center text-[4rem] text-white font-bold text-shadow"
             >
-              32
+              3
             </p>
           </div>
           <div class="bg-[#87AD75] flex rounded-md drop-shadow-lg">
