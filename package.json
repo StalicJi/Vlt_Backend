@@ -22,6 +22,8 @@
   },
   "dependencies": {
     "@vuestic/nuxt": "^1.0.18",
-    "chart.js": "^4.4.1"
+    "axios": "^1.6.3",
+    "chart.js": "^4.4.1",
+    "jquery": "^3.7.1"
   }
 }

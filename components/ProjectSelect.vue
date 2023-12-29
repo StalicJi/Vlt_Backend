@@ -21,25 +21,51 @@
 </template>
 
 <script>
+import axios from "axios";
 import Button from "../components/element/Button.vue";
 export default {
   components: {
     Button,
   },
   name: "Searchable",
+
   data() {
+    
     return {
       options: [
-        "員工園地專案統計功能開發",
-        "113年-嘉義市路燈管理系統軟體顧問服務維護",
-        "好水源網站",
-        "臺南市都市發展資訊系統",
-        "屏東7建物",
-        "112年北宜高網站功能增修",
-        "112年晨豐科技官方網站變更設計計畫",
+ 
       ],
-      valueSingle: "員工園地專案統計功能開發",
+      valueSingle: "",
     };
+  },
+
+  beforeMount (){ 
+  // $.ajax({
+  //       type: "post",
+  //       url: "https://localhost:7500/ProjectAnalysis/ProjectSelector",
+  //       data: JSON.stringify({"id": "All"}),
+  //       contentType: "application/json",
+      
+  //       success: function (response) {
+  //   console.log(response["projectNames"])
+  //       this.options=response["projectNames"]
+        
+  // }
+  //   });
+
+
+
+
+//POST請求
+axios.post("https://localhost:7500/ProjectAnalysis/ProjectSelector",{
+  
+ "id": "All",
+})
+    .then( (response) =>{this.options=response.data.projectNames;this.valueSingle=response.data.projectNames[0]}
+    
+    )
+    .catch( (error) => console.log("11"))
+
   },
 };
 </script>

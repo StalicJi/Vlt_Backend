@@ -25,7 +25,7 @@
             <p
               class="flex-1 flex-center text-[4rem] text-white font-bold text-shadow"
             >
-              3
+              {{ProjectNumber}}
             </p>
           </div>
           <div class="bg-[#87AD75] flex rounded-md drop-shadow-lg">
@@ -36,7 +36,7 @@
             <p
               class="flex-1 flex-center text-[4rem] text-white font-bold text-shadow"
             >
-              11
+              {{ProjectExecutingNumber}}
             </p>
           </div>
           <div class="bg-[#047AE7] flex rounded-md drop-shadow-lg">
@@ -47,7 +47,7 @@
             <p
               class="flex-1 flex-center text-[4rem] text-white font-bold text-shadow"
             >
-              3
+              {{ProjectWarrantygNumber}}
             </p>
           </div>
           <div class="bg-[#787276] flex rounded-md drop-shadow-lg">
@@ -58,14 +58,14 @@
             <p
               class="flex-1 flex-center text-[4rem] text-white font-bold text-shadow"
             >
-              21
+             {{ProjectClosethecaseNumber}}
             </p>
           </div>
         </div>
 
         <!-- 長條圖 -->
         <div class="border rounded-lg row-span-3 drop-shadow-lg p-4 bg-white">
-          <p class="text-center py-4">當前專案長條圖</p>
+          <p class="text-center py-4 test">當前專案長條圖</p>
           <div>
             <canvas id="barChart"></canvas>
           </div>
@@ -77,20 +77,26 @@
 </template>
 
 <script>
+
+
+import axios from "axios";
 import Button from "../components/element/Button.vue";
 import ProjectSelect from "../components/ProjectSelect.vue";
 import Chart from "chart.js/auto";
 
-const labels = ["總專案數", "執行中案數", "保固中專案數", "結案專案數"];
+const labels = [ "執行中案數", "保固中專案數", "結案專案數"];
 
 const data = {
+  //添加
+
+  //
   labels: labels,
   datasets: [
     {
       label: "當前專案長條圖",
-      data: [32, 11, 3, 21],
+      data: [ 11, 3, 21],
       // 色卡透明度加'8f'
-      backgroundColor: ["#AD75968f", "#87AD758f", "#047AE78f", "#7872768f"],
+      backgroundColor: [ "#87AD758f", "#047AE78f", "#7872768f"],
     },
   ],
 };
@@ -119,22 +125,65 @@ export default {
     Button,
     ProjectSelect,
   },
+data(){
+return{
+  ProjectNumber:0,
+  ProjectExecutingNumber:0,
+  ProjectWarrantygNumber:0,
+  ProjectClosethecaseNumber:0
 
+
+}
+
+},
   setup() {
-    onMounted(() => {
-      const canvasTag = document.getElementById("barChart");
+    
+    // onMounted(() => {
+      
+    //   const canvasTag = document.getElementById("barChart");
 
-      if (!canvasTag) {
-        console.error('Canvas element with ID "barChart" not found.');
-        return;
-      }
+    //   if (!canvasTag) {
+    //     console.error('Canvas element with ID "barChart" not found.');
+    //     return;
+    //   }
 
-      try {
-        new Chart(canvasTag, config);
-      } catch (error) {
-        console.error("Error initializing Chart.js:", error);
-      }
-    });
+    //   try {
+    //     new Chart(canvasTag, config);
+    //   } catch (error) {
+    //     console.error("Error initializing Chart.js:", error);
+    //   }
+    // });
   },
+  beforeMount (){ 
+    axios.get("https://localhost:7500/ProjectAnalysis/GetProjectData")
+     .then( (response) =>{
+      this.ProjectNumber=response.data[0].projectNumber;
+      this.ProjectExecutingNumber=response.data[0].projectExecutingNumber;
+      this.ProjectWarrantygNumber=response.data[0].projectWarrantygNumber;
+      this.ProjectClosethecaseNumber=response.data[0].projectClosethecaseNumber;
+      console.log(data.datasets[0].data)
+    data.datasets[0].data=[response.data[0].projectExecutingNumber,response.data[0].projectWarrantygNumber,response.data[0].projectClosethecaseNumber]
+        
+    const canvasTag = document.getElementById("barChart");
+
+if (!canvasTag) {
+  console.error('Canvas element with ID "barChart" not found.');
+  return;
+}
+
+try {
+  new Chart(canvasTag, config);
+} catch (error) {
+  console.error("Error initializing Chart.js:", error);
+}
+  
+  }
+     
+     )
+     .catch( (error) => console.log("11"))
+    
+  },
+
 };
 </script>
+
