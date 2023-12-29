@@ -57,7 +57,7 @@ export default {
 
 
 //POST請求
-axios.post("https://localhost:7500/ProjectAnalysis/ProjectSelector",{
+axios.post("https://192.168.1.243/api/ProjectAnalysis/ProjectSelector",{
   
  "id": "All",
 })

@@ -65,7 +65,7 @@
 
         <!-- 長條圖 -->
         <div class="border rounded-lg row-span-3 drop-shadow-lg p-4 bg-white">
-          <p class="text-center py-4 test">當前專案長條圖</p>
+          <p class="text-center py-4">當前專案長條圖</p>
           <div>
             <canvas id="barChart"></canvas>
           </div>
@@ -155,7 +155,7 @@ return{
     // });
   },
   beforeMount (){ 
-    axios.get("https://localhost:7500/ProjectAnalysis/GetProjectData")
+    axios.get("https://192.168.1.243/api/ProjectAnalysis/GetProjectData")
      .then( (response) =>{
       this.ProjectNumber=response.data[0].projectNumber;
       this.ProjectExecutingNumber=response.data[0].projectExecutingNumber;
