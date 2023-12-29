@@ -165,8 +165,7 @@ return{
     data.datasets[0].data=[response.data[0].projectExecutingNumber,response.data[0].projectWarrantygNumber,response.data[0].projectClosethecaseNumber]
         
     const canvasTag = document.getElementById("barChart");
-
-if (!canvasTag) {
+    if (!canvasTag) {
   console.error('Canvas element with ID "barChart" not found.');
   return;
 }
@@ -176,6 +175,7 @@ try {
 } catch (error) {
   console.error("Error initializing Chart.js:", error);
 }
+
   
   }
      
