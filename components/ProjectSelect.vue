@@ -2,7 +2,7 @@
   <div
     class="border w-full h-28 bg-[#126992] rounded-md drop-shadow-lg py-2 px-4"
   >
-    <div class="flex-btw px-2">
+    <div class="flex-btw">
       <p class="text-white">專案選擇器</p>
       <Button buttonText="查詢" />
     </div>

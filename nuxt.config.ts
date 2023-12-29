@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
 export default defineNuxtConfig({
   devtools: { enabled: false },
   css: ["~/assets/css/main.css"],
@@ -16,4 +17,6 @@ export default defineNuxtConfig({
       // Config here
     },
   },
+  // plugins: ["/plugins/jquery.js"],
+  plugins: [{ src: "~/plugins/jquery", mode: "client" }],
 });

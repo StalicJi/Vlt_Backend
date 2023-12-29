@@ -11,6 +11,9 @@
   .flex-btw {
     @apply flex items-center justify-between;
   }
+  .flex-arr {
+    @apply flex items-center justify-around;
+  }
 
   /*** Shadow */
   .shadow-btm {

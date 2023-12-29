@@ -1,7 +1,7 @@
 <template>
   <div class="flex">
     <Sidebar class="shadow-r" />
-    <div class="h-screen w-full flex flex-col bg-white">
+    <div class="h-100vh w-full flex flex-col bg-white">
       <Header class="h-16 shadow-btm" />
       <NuxtPage class="flex-1" />
     </div>
