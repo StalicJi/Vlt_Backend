@@ -1,16 +1,15 @@
 <template>
   <div
-    class="border w-full h-28 bg-[#126992] rounded-md drop-shadow-lg py-2 px-4"
+    class="border w-full bg-[#126992] rounded-md drop-shadow-lg pt-2 pb-4 px-4"
   >
     <div class="flex-btw">
       <p class="text-white">專案選擇器</p>
       <Button buttonText="查詢" />
     </div>
-    <div class="mt-2 px-2">
+    <div class="mt-4 px-2">
       <VaSelect
         v-model="valueSingle"
         :options="options"
-        searchable
         highlight-matched-text
         background="#fff"
         class="w-full"
@@ -21,12 +20,14 @@
 </template>
 
 <script>
+import axios from "axios";
 import Button from "../components/element/Button.vue";
 export default {
   components: {
     Button,
   },
   name: "Searchable",
+
   data() {
     return {
       options: [
@@ -37,9 +38,25 @@ export default {
         "屏東7建物",
         "112年北宜高網站功能增修",
         "112年晨豐科技官方網站變更設計計畫",
+        "110年度新竹縣公共設施管線位置調查暨系統建置計畫委託資訊服務案",
       ],
       valueSingle: "員工園地專案統計功能開發",
+      // options: [],
+      // valueSingle: "",
     };
   },
+
+  // beforeMount() {
+  //   //POST請求
+  //   axios
+  //     .post("https://192.168.1.243/api/ProjectAnalysis/ProjectSelector", {
+  //       id: "All",
+  //     })
+  //     .then((response) => {
+  //       this.options = response.data.projectNames;
+  //       this.valueSingle = response.data.projectNames[0];
+  //     })
+  //     .catch((error) => console.log("11"));
+  // },
 };
 </script>
