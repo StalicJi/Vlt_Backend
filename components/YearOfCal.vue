@@ -6,7 +6,7 @@
       <Button buttonText="圓餅圖" class="w-24" @click="showPieChartCnt" />
       <VaDateInput background="#fff" color="info" placeholder="請選擇起始日" />
       <VaDateInput background="#fff" color="info" placeholder="請選擇結束日" />
-      <Button buttonText="查詢" class="w-24" @click="" />
+      <Button buttonText="查詢" class="w-24" @click="goToStaffTabel" />
     </div>
 
     <div
@@ -44,13 +44,18 @@ export default {
 
   mounted() {
     this.initYBarChart();
-    this.initPieChart();
+    this.showPieChart = !this.showPieChart;
+    this.$nextTick(() => {
+      this.initPieChart();
+      this.showPieChart = !this.showPieChart;
+    });
   },
 
   methods: {
     // 橫向長條圖
     initYBarChart() {
       const chartDom = document.getElementById("yBarChart");
+      if (!chartDom) return;
       const myChart = echarts.init(chartDom);
 
       const option = {
@@ -131,6 +136,7 @@ export default {
     // 圓餅圖
     initPieChart() {
       const chartDom = document.getElementById("pieChart");
+      if (!chartDom) return;
       const myChart = echarts.init(chartDom);
       const option = {
         tooltip: {
