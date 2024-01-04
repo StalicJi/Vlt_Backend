@@ -2,13 +2,8 @@
   <div class="grid grid-flow-row p-7">
     <!-- Head -->
     <div class="flex-btw">
-      <div class="flex items-center">
-        <VaIcon name="bar_chart" size="28px" color="textPrimary" />
-        <h1 class="text-2xl">專案統計</h1>
-      </div>
-      <div>
-        <Button buttonText="個人專案查詢" @click="goToStuffTabel" />
-      </div>
+      <PageTitle icon-name="bar_chart" page-title="專案統計" />
+      <Button buttonText="個人專案查詢" @click="goToStuffTabel" />
     </div>
 
     <!-- Section -->
@@ -79,6 +74,7 @@
 import axios from "axios";
 import Button from "../components/element/Button.vue";
 import ProjectSelect from "../components/ProjectSelect.vue";
+import PageTitle from "../components/element/PageTitile.vue";
 import YearOfCal from "../components/YearOfCal.vue";
 import * as echarts from "echarts";
 
@@ -87,6 +83,7 @@ export default {
     Button,
     ProjectSelect,
     YearOfCal,
+    PageTitle,
   },
 
   data() {

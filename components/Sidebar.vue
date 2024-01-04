@@ -11,8 +11,4 @@
 
 <script setup lang="ts">
 import Menu from "../components/Menu.vue";
-
-// useHead({
-//   title: "後台管理系統",
-// });
 </script>

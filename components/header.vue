@@ -4,12 +4,12 @@
       <div class="header-btn">
         <VaIcon name="home" size="20px" color="#fff" @click="goHomePage" />
       </div>
-      <div class="header-btn">
+      <!-- <div class="header-btn">
         <VaIcon name="arrow_back" size="20px" color="#fff" />
       </div>
       <div class="header-btn">
         <VaIcon name="arrow_forward" size="20px" color="#fff" />
-      </div>
+      </div> -->
       <div class="header-btn">
         <VaIcon name="refresh" size="20px" color="#fff" @click="reLoad" />
       </div>
