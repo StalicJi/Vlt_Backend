@@ -2,11 +2,25 @@
   <div class="grid gap-4 grid-flow-row grid-rows-12 flex-1">
     <!-- !時間選擇 -->
     <div class="flex gap-4 w-full row-span-1 h-12">
-      <Button buttonText="柱狀圖" class="w-24" @click="showYBarChartCnt" />
-      <Button buttonText="圓餅圖" class="w-24" @click="showPieChartCnt" />
+      <Button
+        buttonText="專案時間"
+        @click="showYBarChartCnt"
+        :class="{
+          'focus:bg-black': activeChart === 'bar',
+          'focus:bg-gray': activeChart !== 'bar',
+        }"
+      />
+      <Button
+        buttonText="工作型態"
+        @click="showPieChartCnt"
+        :class="{
+          'focus:bg-black': activeChart === 'pie',
+          'focus:bg-gray': activeChart !== 'pie',
+        }"
+      />
       <VaDateInput background="#fff" color="info" placeholder="請選擇起始日" />
       <VaDateInput background="#fff" color="info" placeholder="請選擇結束日" />
-      <Button buttonText="查詢" class="w-24" @click="goToStaffTabel" />
+      <Button buttonText="查詢" @click="" />
     </div>
 
     <div
@@ -20,7 +34,7 @@
       <!-- 圓餅圖 -->
       <div class="pt-4 h-full" :class="{ hidden: !showPieChart }">
         <p class="text-center text-xl pb-4">工作型態圓餅圖</p>
-        <div id="pieChart" style="height: 100%; width: 100%"></div>
+        <div id="pieChart" style="height: 90%; width: 100%"></div>
       </div>
     </div>
   </div>
@@ -39,6 +53,7 @@ export default {
     return {
       value: new Date(2000, 0, 1),
       showPieChart: false,
+      activeChart: "bar",
     };
   },
 
@@ -179,10 +194,12 @@ export default {
     },
 
     showYBarChartCnt() {
+      this.activeChart = "bar";
       this.showPieChart = false;
     },
 
     showPieChartCnt() {
+      this.activeChart = "pie";
       this.showPieChart = true;
     },
   },
