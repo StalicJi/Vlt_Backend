@@ -10,14 +10,12 @@
   </NuxtLayout>
 </template>
 
-<script>
+<script setup lang="ts">
 import Header from "./components/Header.vue";
 import SideBar from "./components/Sidebar.vue";
 
-export default {
-  components: {
-    Header,
-    SideBar,
-  },
-};
+useHead({
+  title: "後端管理系統",
+  meta: [{ name: "description", content: "My amazing site." }],
+});
 </script>
