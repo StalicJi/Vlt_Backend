@@ -20,7 +20,7 @@
       <!-- 圓餅圖 -->
       <div class="pt-4 h-full yBarChartbox" :class="{ hidden: !showPieChart }">
         <p class="text-center text-xl pb-4">工作型態圓餅圖</p>
-        <div id="pieChart" style="height: 82%; width: 100%"></div>
+        <div id="pieChart" style="height: 90%; width: 100%"></div>
       </div>
     </div>
   </div>
@@ -74,7 +74,6 @@ export default {
       this.creatinitYBarChart(new Date(this.startdate).toISOString(),new Date(this.endtdate).toISOString());
       this.creatinitPieChart(new Date(this.startdate).toISOString(),new Date(this.endtdate).toISOString());
     
-    
     }
 
      
@@ -124,7 +123,6 @@ let series=[]
 } else {
   seriesdata.push(0)
     console.log(`${response.data.projectList[i]} 不在字典的鍵中`);
-
 }
 
       }
@@ -227,9 +225,18 @@ let worktypesdata=[]
 //  $(".initYBarChartbox").html(`<p class="text-center text-xl pb-4">專案進行總時間</p>
 //         <div id="yBarChart" style="height: 100%; width: 100%"></div>`);
       
-$(".finddate").click(function (e) { 
-  myChart.clear()
-  
+$(".finddate").click((e)  => { 
+  const date = new Date();
+  console.log(date)
+  console.log(this.endtdate)
+  console.log(this.endtdate>=date)
+  if (this.endtdate<this.startdate || this.endtdate>=date){
+    console.log("myChart")
+  }
+    else{ 
+      console.log(this.endtdate)
+      myChart.clear()
+      }  
 });
 
 
@@ -285,8 +292,13 @@ $(".finddate").click(function (e) {
 
     // 圓餅圖
     initPieChart(datalist) {
-      $(".finddate").click(function (e) { 
-  myChart2.clear()
+      $(".finddate").click((e)  => { 
+        const date = new Date();
+        console.log(date)
+  if (this.endtdate<this.startdate || this.endtdate>=date){console.log("myChart")}
+    else{ 
+      myChart2.clear()
+      }
   
 });
       
