@@ -114,7 +114,6 @@ export default {
 
     // -------------------Chart-------------------
     creatinitYBarChart(start, end) {
-      this.$axios;
       API.post("api/ProjectAnalysis/PostProjectData", {
         projectnamedata: "2012-16",
         startdate: start,
@@ -173,7 +172,6 @@ export default {
     },
 
     creatinitPieChart(start, end) {
-      this.$axios;
       API.post("api/ProjectAnalysis/PostProjectData", {
         projectnamedata: "2012-16",
         startdate: start,

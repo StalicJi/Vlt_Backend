@@ -46,7 +46,6 @@ export default {
   },
 
   beforeMount() {
-    this.$axios;
     API.post("api/ProjectAnalysis/ProjectSelector", {
       id: "All",
     })

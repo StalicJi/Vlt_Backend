@@ -95,7 +95,6 @@ export default {
     };
   },
   mounted() {
-    this.$axios;
     API.get("/api/ProjectAnalysis/GetProjectData")
       .then((response) => {
         this.ProjectNumber = response.data[0].projectNumber;

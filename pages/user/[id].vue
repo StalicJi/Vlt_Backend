@@ -7,7 +7,7 @@
         <h1 class="ml-4 border p-2">姓名：邱育聖</h1>
         <h1 class="ml-4">部門：資訊部</h1>
         <h1 class="ml-4">職稱：工程師</h1>
-        <!-- <div>id :{{ $route.params.id }}</div> -->
+        <div>id :{{ $route.params.id }}</div>
       </div>
     </div>
 
@@ -76,10 +76,10 @@
 </template>
 
 <script>
-import axios from "axios";
-import Button from "../../components/element/Button.vue";
-import ProjectSelect from "../../components/ProjectSelect.vue";
-import PageTitle from "../../components/element/PageTitile.vue";
+import API from "../src/api";
+import Button from "../components/element/Button.vue";
+import ProjectSelect from "../components/ProjectSelect.vue";
+import PageTitle from "../components/element/PageTitile.vue";
 import YearOfCal from "../components/YearOfCal.vue";
 import * as echarts from "echarts";
 
@@ -100,9 +100,26 @@ export default {
     };
   },
   mounted() {
-    const userId = this.$route.params.id;
-    axios
-      .get("https://192.168.1.243/api/ProjectAnalysis/GetProjectData") //dev
+    //id檢查
+
+    API.post("/api/ProjectAnalysis/PostStaffData", {
+      Staffid: this.$route.params.id,
+    })
+      .then((response) => {
+        const userId = response.data[0].staff_id;
+        console.log(userId);
+
+        if (userId === this.$route.params.id) {
+          console.log(response.data);
+        } else {
+          console.error("User ID mismatch");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+      });
+
+    API.get("/api/ProjectAnalysis/GetProjectData")
       .then((response) => {
         this.ProjectNumber = response.data[0].projectNumber;
         this.ProjecBusinessNumber = response.data[0].projecBusinessNumber;
