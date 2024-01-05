@@ -9,14 +9,12 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-
   modules: ["@nuxtjs/tailwindcss", "@nuxt/image", "@vuestic/nuxt"],
-
   vuestic: {
     config: {
       // Config here
     },
   },
-  // plugins: ["/plugins/jquery.js"],
+
   plugins: [{ src: "~/plugins/jquery", mode: "client" }],
 });

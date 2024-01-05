@@ -31,32 +31,30 @@ export default {
   data() {
     return {
       options: [
-        "員工園地專案統計功能開發",
-        "113年-嘉義市路燈管理系統軟體顧問服務維護",
-        "好水源網站",
-        "臺南市都市發展資訊系統",
-        "屏東7建物",
-        "112年北宜高網站功能增修",
-        "112年晨豐科技官方網站變更設計計畫",
-        "110年度新竹縣公共設施管線位置調查暨系統建置計畫委託資訊服務案",
+        // "員工園地專案統計功能開發",
+        // "113年-嘉義市路燈管理系統軟體顧問服務維護",
+        // "好水源網站",
+        // "臺南市都市發展資訊系統",
+        // "屏東7建物",
+        // "112年北宜高網站功能增修",
+        // "112年晨豐科技官方網站變更設計計畫",
+        // "110年度新竹縣公共設施管線位置調查暨系統建置計畫委託資訊服務案",
       ],
-      valueSingle: "員工園地專案統計功能開發",
-      // options: [],
-      // valueSingle: "",
+      // valueSingle: "員工園地專案統計功能開發",
+      valueSingle: "",
     };
   },
 
-  // beforeMount() {
-  //   //POST請求
-  //   axios
-  //     .post("https://192.168.1.243/api/ProjectAnalysis/ProjectSelector", {
-  //       id: "All",
-  //     })
-  //     .then((response) => {
-  //       this.options = response.data.projectNames;
-  //       this.valueSingle = response.data.projectNames[0];
-  //     })
-  //     .catch((error) => console.log("11"));
-  // },
+  beforeMount() {
+    axios
+      .post("https://192.168.1.243/api/ProjectAnalysis/ProjectSelector", {
+        id: "All",
+      })
+      .then((response) => {
+        this.options = response.data.projectNames;
+        this.valueSingle = response.data.projectNames[0];
+      })
+      .catch((error) => console.error("ERROR:Check FetchAPI"));
+  },
 };
 </script>

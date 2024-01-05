@@ -20,7 +20,7 @@
             <p
               class="flex-1 flex-center text-[4rem] text-white font-bold text-shadow"
             >
-              {{ ProjectNumber }}
+              {{ ProjecBusinessNumber }}
             </p>
           </div>
           <div class="bg-[#87AD75] flex rounded-md drop-shadow-lg">
@@ -88,14 +88,26 @@ export default {
 
   data() {
     return {
-      ProjectNumber: 0,
+      ProjecBusinessNumber: 0,
       ProjectExecutingNumber: 0,
       ProjectWarrantygNumber: 0,
       ProjectClosethecaseNumber: 0,
     };
   },
   mounted() {
-    this.initBarChart();
+    axios
+      .get("https://192.168.1.243/api/ProjectAnalysis/GetProjectData") //dev
+      .then((response) => {
+        this.ProjectNumber = response.data[0].projectNumber;
+        this.ProjecBusinessNumber = response.data[0].projecBusinessNumber;
+        this.ProjectExecutingNumber = response.data[0].projectExecutingNumber;
+        this.ProjectWarrantygNumber = response.data[0].projectWarrantygNumber;
+        this.ProjectClosethecaseNumber =
+          response.data[0].projectClosethecaseNumber;
+
+        this.initBarChart();
+      })
+      .catch((error) => console.error(error));
   },
 
   methods: {
@@ -109,9 +121,9 @@ export default {
           textStyle: { fontSize: "20", fontWeight: "normal" },
           left: "center",
         },
-        //小視窗觸發類型
+
         tooltip: {
-          trigger: "axis", //item圖形觸發
+          trigger: "axis",
           axisPointer: {
             type: "line",
           },
@@ -126,10 +138,22 @@ export default {
         series: [
           {
             data: [
-              { value: 3, itemStyle: { color: "#ad7596", opacity: 0.8 } },
-              { value: 10, itemStyle: { color: "#87AD75", opacity: 0.8 } },
-              { value: 5, itemStyle: { color: "#047AE7", opacity: 0.8 } },
-              { value: 34, itemStyle: { color: "#e3a74d", opacity: 0.8 } },
+              {
+                value: this.ProjecBusinessNumber,
+                itemStyle: { color: "#ad7596", opacity: 0.8 },
+              },
+              {
+                value: this.ProjectExecutingNumber,
+                itemStyle: { color: "#87AD75", opacity: 0.8 },
+              },
+              {
+                value: this.ProjectWarrantygNumber,
+                itemStyle: { color: "#047AE7", opacity: 0.8 },
+              },
+              {
+                value: this.ProjectClosethecaseNumber,
+                itemStyle: { color: "#e3a74d", opacity: 0.8 },
+              },
             ],
             type: "bar",
           },
@@ -144,36 +168,5 @@ export default {
       this.$router.push("user");
     },
   },
-  // beforeMount() {
-  //   axios
-  //     // .get("https://localhost:7500/ProjectAnalysis/GetProjectData") //local
-  //     .get("https://192.168.1.243/api/ProjectAnalysis/GetProjectData") //dev
-  //     .then((response) => {
-  //       this.ProjectNumber = response.data[0].projectNumber;
-  //       this.ProjectExecutingNumber = response.data[0].projectExecutingNumber;
-  //       this.ProjectWarrantygNumber = response.data[0].projectWarrantygNumber;
-  //       this.ProjectClosethecaseNumber =
-  //         response.data[0].projectClosethecaseNumber;
-  //       console.log(data.datasets[0].data);
-  //       data.datasets[0].data = [
-  //         response.data[0].projectExecutingNumber,
-  //         response.data[0].projectWarrantygNumber,
-  //         response.data[0].projectClosethecaseNumber,
-  //       ];
-
-  //       const canvasTag = document.getElementById("barChart");
-  //       if (!canvasTag) {
-  //         console.error('Canvas element with ID "barChart" not found.');
-  //         return;
-  //       }
-
-  //       try {
-  //         new Chart(canvasTag, config);
-  //       } catch (error) {
-  //         console.error("Error initializing Chart.js:", error);
-  //       }
-  //     })
-  //     .catch((error) => console.log("11"));
-  // },
 };
 </script>

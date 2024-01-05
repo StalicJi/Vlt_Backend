@@ -65,7 +65,7 @@ export default {
         },
         {
           id: 1110809,
-          fullName: "Todd Sellers",
+          fullName: "邱育聖",
           department: "資訊部",
           position: "工程師",
         },
@@ -94,7 +94,6 @@ export default {
     goUserId(id, name, department, position) {
       this.$router.push({
         path: `/user/${id}`,
-        query: { name, department, position },
       });
     },
   },
