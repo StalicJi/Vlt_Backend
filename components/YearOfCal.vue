@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import API from "../src/api";
 import Button from "../components/element/Button.vue";
 import * as echarts from "echarts";
 
@@ -114,12 +114,12 @@ export default {
 
     // -------------------Chart-------------------
     creatinitYBarChart(start, end) {
-      axios
-        .post("https://192.168.1.243/api/ProjectAnalysis/PostProjectData", {
-          projectnamedata: "2012-16",
-          startdate: start,
-          enddate: end,
-        })
+      this.$axios;
+      API.post("api/ProjectAnalysis/PostProjectData", {
+        projectnamedata: "2012-16",
+        startdate: start,
+        enddate: end,
+      })
         .then((response) => {
           let person = [];
           let personvalue = [];
@@ -173,12 +173,12 @@ export default {
     },
 
     creatinitPieChart(start, end) {
-      axios
-        .post("https://192.168.1.243/api/ProjectAnalysis/PostProjectData", {
-          projectnamedata: "2012-16",
-          startdate: start,
-          enddate: end,
-        }) //dev
+      this.$axios;
+      API.post("api/ProjectAnalysis/PostProjectData", {
+        projectnamedata: "2012-16",
+        startdate: start,
+        enddate: end,
+      })
         .then((response) => {
           let worktypesdata = [];
 

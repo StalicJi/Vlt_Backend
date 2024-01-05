@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import PageTitle from "../../components/element/PageTitile.vue";
 import Button from "../../components/element/Button.vue";
 export default {

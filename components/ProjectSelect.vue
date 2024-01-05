@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import API from "../src/api";
 import Button from "../components/element/Button.vue";
 export default {
   components: {
@@ -46,15 +46,15 @@ export default {
   },
 
   beforeMount() {
-    axios
-      .post("https://192.168.1.243/api/ProjectAnalysis/ProjectSelector", {
-        id: "All",
-      })
+    this.$axios;
+    API.post("api/ProjectAnalysis/ProjectSelector", {
+      id: "All",
+    })
       .then((response) => {
         this.options = response.data.projectNames;
         this.valueSingle = response.data.projectNames[0];
       })
-      .catch((error) => console.error("ERROR:Check FetchAPI"));
+      .catch((error) => console.error(error));
   },
 };
 </script>

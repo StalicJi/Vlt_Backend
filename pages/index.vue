@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import API from "../src/api";
 import Button from "../components/element/Button.vue";
 import ProjectSelect from "../components/ProjectSelect.vue";
 import PageTitle from "../components/element/PageTitile.vue";
@@ -95,8 +95,8 @@ export default {
     };
   },
   mounted() {
-    axios
-      .get("https://192.168.1.243/api/ProjectAnalysis/GetProjectData") //dev
+    this.$axios;
+    API.get("/api/ProjectAnalysis/GetProjectData")
       .then((response) => {
         this.ProjectNumber = response.data[0].projectNumber;
         this.ProjecBusinessNumber = response.data[0].projecBusinessNumber;
