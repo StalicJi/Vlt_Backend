@@ -73,6 +73,11 @@
 import { ref } from "vue";
 
 const activeElement = ref("專案統計");
+
+// const goToHome = () => {
+//   router.push({ path: "/" });
+// };
+
 const items = [
   {
     title: "報表登入",
@@ -109,6 +114,7 @@ const items = [
     icon: "groups",
     children: [{ title: "維護" }, { title: "檢視" }],
   },
+
   { title: "專案統計", icon: "bar_chart" },
   {
     title: "個人設定",

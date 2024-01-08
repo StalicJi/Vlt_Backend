@@ -16,50 +16,30 @@
         <ProjectSelect class="row-span-1" :id="$route.params.id" />
 
         <div class="row-span-2 grid grid-cols-2 grid-flow-row gap-4">
-          <div class="bg-[#ad7596] flex rounded-md drop-shadow-lg">
-            <div class="flex-1 flex-center flex-col">
-              <p class="text-white mb-1">業務中</p>
-              <VaIcon name="library_books" size="3rem" color="#fff" />
-            </div>
-            <p
-              class="flex-1 flex-center text-[4rem] text-white font-bold text-shadow"
-            >
-              {{ ProjecBusinessNumber }}
-            </p>
-          </div>
-          <div class="bg-[#87AD75] flex rounded-md drop-shadow-lg">
-            <div class="flex-1 flex-center flex-col">
-              <p class="text-white mb-1">執行中</p>
-              <VaIcon name="code" size="3rem" color="#fff" />
-            </div>
-            <p
-              class="flex-1 flex-center text-[4rem] text-white font-bold text-shadow"
-            >
-              {{ ProjectExecutingNumber }}
-            </p>
-          </div>
-          <div class="bg-[#047AE7] flex rounded-md drop-shadow-lg">
-            <div class="flex-1 flex-center flex-col">
-              <p class="text-white mb-1">保固中</p>
-              <VaIcon name="construction" size="3rem" color="#fff" />
-            </div>
-            <p
-              class="flex-1 flex-center text-[4rem] text-white font-bold text-shadow"
-            >
-              {{ ProjectWarrantygNumber }}
-            </p>
-          </div>
-          <div class="bg-[#e3a74d] flex rounded-md drop-shadow-lg">
-            <div class="flex-1 flex-center flex-col">
-              <p class="text-white mb-1">結案</p>
-              <VaIcon name="assignment_turned_in" size="3rem" color="#fff" />
-            </div>
-            <p
-              class="flex-1 flex-center text-[4rem] text-white font-bold text-shadow"
-            >
-              {{ ProjectClosethecaseNumber }}
-            </p>
-          </div>
+          <AllStaCard
+            bgColorClass="bg-[#ad7596]"
+            label="業務中"
+            iconName="library_books"
+            :value="ProjecBusinessNumber"
+          />
+          <AllStaCard
+            bgColorClass="bg-[#87AD75]"
+            label="執行中"
+            iconName="code"
+            :value="ProjectExecutingNumber"
+          />
+          <AllStaCard
+            bgColorClass="bg-[#047AE7]"
+            label="保固中"
+            iconName="construction"
+            :value="ProjectWarrantygNumber"
+          />
+          <AllStaCard
+            bgColorClass="bg-[#e3a74d]"
+            label="結案"
+            iconName="assignment_turned_in"
+            :value="ProjectClosethecaseNumber"
+          />
         </div>
 
         <!-- 長條圖 -->
@@ -80,6 +60,7 @@ import Button from "../../../components/element/Button.vue";
 import ProjectSelect from "../../../components/ProjectSelect.vue";
 import PageTitle from "../../../components/element/PageTitile.vue";
 import YearOfCal from "../../../components/YearOfCal.vue";
+import AllStaCard from "../../../components/element/AllStatisticsCard.vue";
 import * as echarts from "echarts";
 
 export default {
@@ -88,6 +69,7 @@ export default {
     ProjectSelect,
     YearOfCal,
     PageTitle,
+    AllStaCard,
   },
 
   data() {
@@ -109,7 +91,7 @@ export default {
     })
       .then((response) => {
         const userId = response.data[0].staff_id;
-        console.log(userId);
+        // console.log(userId);
 
         if (userId === this.$route.params.id) {
           this.searchUserName = response.data[0].name;
@@ -134,7 +116,7 @@ export default {
 
         this.initBarChart();
       })
-      .catch((error) => console.error(error));
+      .catch((error) => console.error("Error fetching project data:", error));
   },
 
   methods: {
@@ -189,10 +171,6 @@ export default {
 
       myChart.setOption(option);
       option && myChart.setOption(option);
-    },
-
-    goToStuffTabel() {
-      this.$router.push("user");
     },
   },
 };

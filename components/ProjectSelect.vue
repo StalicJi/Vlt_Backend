@@ -70,9 +70,10 @@ export default {
         .then((response) => {
           this.options = response.data.projectNames;
           this.valueSingle = response.data.projectNames[0];
-          // console.log(response.data.projectNames[0]);
         })
-        .catch((error) => console.error(error));
+        .catch((error) =>
+          console.error("Error fetching all project data:", error)
+        );
     },
 
     getIdSelect(userid) {
@@ -87,7 +88,9 @@ export default {
             this.valueSingle = "此員工無專案紀錄...";
           }
         })
-        .catch((error) => console.error(error));
+        .catch((error) =>
+          console.error("Error fetching project data with user id :", error)
+        );
     },
   },
 };

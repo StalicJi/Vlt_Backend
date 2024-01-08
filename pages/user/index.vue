@@ -61,30 +61,6 @@ export default {
         //   dep_name: "資訊部 ",
         //   jobname: "工程師",
         // },
-        // {
-        //   staff_id: 1110809,
-        //   name: "邱育聖",
-        //   dep_name: "資訊部",
-        //   jobname: "工程師",
-        // },
-        // {
-        //   staff_id: 1040506,
-        //   name: "Sherman Knowles",
-        //   dep_name: "資訊部",
-        //   jobname: "工程師",
-        // },
-        // {
-        //   staff_id: 1030423,
-        //   name: "Vasquez Lawson",
-        //   dep_name: "人事部",
-        //   jobname: "人事經理",
-        // },
-        // {
-        //   staff_id: 1120423,
-        //   name: "Vasquez Lawson",
-        //   dep_name: "人事部",
-        //   jobname: "人事經理",
-        // },
       ],
     };
   },
@@ -99,12 +75,12 @@ export default {
         });
       })
       .catch((error) => {
-        console.error(error);
+        console.error("Error fetching user data:", error);
       });
   },
 
   methods: {
-    goUserId(id, name, department, position) {
+    goUserId(id) {
       this.$router.push({
         path: `/user/${id}`,
       });
