@@ -26,6 +26,13 @@ export default {
   components: {
     Button,
   },
+
+  props: {
+    id: {
+      type: String,
+      default: "",
+    },
+  },
   name: "Searchable",
 
   data() {
@@ -45,15 +52,43 @@ export default {
     };
   },
 
-  beforeMount() {
-    API.post("api/ProjectAnalysis/ProjectSelector", {
-      id: "All",
-    })
-      .then((response) => {
-        this.options = response.data.projectNames;
-        this.valueSingle = response.data.projectNames[0];
+  mounted() {
+    if (this.$route.path === "/") {
+      this.getAllSelect();
+    } else if (this.$route.path === `/user/${this.id}`) {
+      this.getIdSelect(this.id);
+    } else {
+      console.log("The selector is not in a valid link");
+    }
+  },
+
+  methods: {
+    getAllSelect() {
+      API.post("api/ProjectAnalysis/ProjectSelector", {
+        id: "All",
       })
-      .catch((error) => console.error(error));
+        .then((response) => {
+          this.options = response.data.projectNames;
+          this.valueSingle = response.data.projectNames[0];
+          // console.log(response.data.projectNames[0]);
+        })
+        .catch((error) => console.error(error));
+    },
+
+    getIdSelect(userid) {
+      API.post("api/ProjectAnalysis/ProjectSelector", {
+        id: userid,
+      })
+        .then((response) => {
+          if (response.data.projectNames[0]) {
+            this.options = response.data.projectNames;
+            this.valueSingle = response.data.projectNames[0];
+          } else {
+            this.valueSingle = "此員工無專案紀錄...";
+          }
+        })
+        .catch((error) => console.error(error));
+    },
   },
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div>專案</div>
+  <div>專案id</div>
 </template>
 
 <script>
