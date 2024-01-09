@@ -3,16 +3,24 @@
     <!-- Head -->
     <div class="flex-btw">
       <PageTitle icon-name="bar_chart" page-title="專案統計" />
-      <Button
-        buttonText="個人專案查詢"
-        @click="$router.push({ path: '/user' })"
-      />
+      <div class="flex">
+        <Button
+          buttonText="專案各別查詢"
+          @click="$router.push({ path: '/project' })"
+          class="ml-2"
+        />
+        <Button
+          buttonText="個人專案查詢"
+          @click="$router.push({ path: '/user' })"
+          class="ml-2"
+        />
+      </div>
     </div>
 
     <!-- Section -->
     <div class="mt-8 grid grid-flow-col grid-cols-5 gap-4">
       <div class="col-span-2 grid grid-flow-row grid-rows-6 gap-4">
-        <ProjectSelect class="row-span-1" />
+        <!-- <ProjectSelect class="row-span-1" /> -->
 
         <div class="row-span-2 grid grid-cols-2 grid-flow-row gap-4">
           <AllStaCard

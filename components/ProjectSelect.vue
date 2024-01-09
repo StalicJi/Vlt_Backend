@@ -53,7 +53,7 @@ export default {
   },
 
   mounted() {
-    if (this.$route.path === "/") {
+    if (this.$route.path === "/project") {
       this.getAllSelect();
     } else if (this.$route.path === `/user/${this.id}`) {
       this.getIdSelect(this.id);

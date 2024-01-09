@@ -1,5 +1,5 @@
 <template>
-  <div>專案id</div>
+  <div>進階圖表</div>
 </template>
 
 <script>

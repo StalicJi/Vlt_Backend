@@ -1,6 +1,10 @@
 import type { VaIcon } from '#build/components';
 <template>
-  <button class="default-btn text-white text-sm" @click="handleClick">
+  <button
+    class="default-btn text-white text-sm"
+    :class="btnColor"
+    @click="handleClick"
+  >
     {{ buttonText }}
   </button>
 </template>
@@ -11,6 +15,9 @@ export default {
     buttonText: {
       type: String,
       default: "Click me",
+    },
+    btnColor: {
+      type: String,
     },
   },
   methods: {
