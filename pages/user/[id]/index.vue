@@ -2,18 +2,23 @@
   <div class="grid grid-flow-row p-7">
     <!-- Head -->
     <div class="flex-btw">
-      <PageTitle icon-name="person" page-title="個人專案統計" />
-      <div class="flex-btw w-[28rem]">
-        <h1 class="ml-4 p-2 text-lg">姓名：{{ searchUserName }}</h1>
-        <h1 class="ml-4 p-2 text-lg">部門：{{ searchDepName }}</h1>
-        <h1 class="ml-4 p-2 text-lg">職稱：{{ searchJobName }}</h1>
+      <div class="flex">
+        <PageTitle icon-name="person" :page-title="titleUserName" />
+      </div>
+      <div class="flex-btw w-72">
+        <h1 class="ml-4 p-2 text-xl">部門：{{ searchDepName }}</h1>
+        <h1 class="ml-4 p-2 text-xl">職稱：{{ searchJobName }}</h1>
       </div>
     </div>
 
     <!-- Section -->
     <div class="mt-8 grid grid-flow-col grid-cols-5 gap-4">
       <div class="col-span-2 grid grid-flow-row grid-rows-6 gap-4">
-        <ProjectSelect class="row-span-1" :id="$route.params.id" />
+        <ProjectSelect
+          class="row-span-1"
+          :id="$route.params.id"
+          :project_id="123"
+        />
 
         <div class="row-span-2 grid grid-cols-2 grid-flow-row gap-4">
           <AllStaCard
@@ -81,6 +86,7 @@ export default {
       searchUserName: "",
       searchDepName: "",
       searchJobName: "",
+      titleUserName: "",
     };
   },
   mounted() {
@@ -97,6 +103,9 @@ export default {
           this.searchUserName = response.data[0].name;
           this.searchDepName = response.data[0].dep_name;
           this.searchJobName = response.data[0].jobname;
+          this.titleUserName = String(
+            "個人專案統計" + " : " + " " + response.data[0].name
+          );
         } else {
           console.error("User ID mismatch");
         }

@@ -65,7 +65,7 @@
         <Button
           buttonText="進階圖表"
           btnColor="bg-rose-700"
-          @click="goAdvCharts(22)"
+          @click="goAdvCharts(this.projectId)"
         />
       </div>
     </div>
@@ -88,6 +88,7 @@ export default {
 
   data() {
     return {
+      projectId: "",
       users: [
         {
           staff_id: 1120401,
@@ -122,20 +123,23 @@ export default {
   },
 
   mounted() {
-    // API.post("api/ProjectAnalysis/PostStaffData", {
-    //   Staffid: "All",
-    // })
-    //   .then((response) => {
-    //     this.users = response.data.sort((a, b) => {
-    //       return b.staff_duty - a.staff_duty;
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error fetching user data:", error);
-    //   });
+    this.getAllSelect();
   },
 
   methods: {
+    getAllSelect() {
+      API.post("api/ProjectAnalysis/ProjectSelector", {
+        id: "All",
+      })
+        .then((response) => {
+          this.options = response.data.projectNames;
+          this.projectId = response.data.projectNames[0];
+        })
+        .catch((error) =>
+          console.error("Error fetching all project data:", error)
+        );
+    },
+
     goAdvCharts(id) {
       this.$router.push({
         path: `/project/adv_charts/${id}`,

@@ -4,7 +4,7 @@
   >
     <div class="flex-btw">
       <p class="text-white">專案選擇器</p>
-      <Button buttonText="查詢" />
+      <Button buttonText="查詢" @click="projectSearch(this.valueSingle)" />
     </div>
     <div class="mt-4 px-2">
       <VaSelect
@@ -31,6 +31,12 @@ export default {
     id: {
       type: String,
       default: "",
+    },
+    project_id: {
+      type: String && Number,
+    },
+    handelSearch: {
+      type: Function,
     },
   },
   name: "Searchable",
@@ -84,6 +90,7 @@ export default {
           if (response.data.projectNames[0]) {
             this.options = response.data.projectNames;
             this.valueSingle = response.data.projectNames[0];
+            // console.log(response.data);
           } else {
             this.valueSingle = "此員工無專案紀錄...";
           }
@@ -91,6 +98,15 @@ export default {
         .catch((error) =>
           console.error("Error fetching project data with user id :", error)
         );
+    },
+
+    projectSearch(project_id) {
+      if (this.$route.path === `/user/${this.id}`)
+        this.$router.push({
+          path: `/user/${this.id}/${project_id}`,
+        });
+
+      if (this.$route.path === "/project") console.log("專案各別查詢:搜尋專案");
     },
   },
 };

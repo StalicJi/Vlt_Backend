@@ -22,7 +22,6 @@ export default {
     bgColorClass: {
       type: String,
     },
-
     title: {
       type: String,
     },
