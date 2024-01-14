@@ -8,6 +8,7 @@
       {{ value }}
     </p>
   </div>
+  <!-- <h1>詳細資訊</h1> -->
 </template>
 
 <script>

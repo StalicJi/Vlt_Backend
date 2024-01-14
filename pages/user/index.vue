@@ -44,7 +44,7 @@
 
 <script>
 import API from "../../src/api";
-import PageTitle from "../../components/element/PageTitile.vue";
+import PageTitle from "../../components/element/PageTitle.vue";
 import Button from "../../components/element/Button.vue";
 export default {
   components: {
@@ -55,8 +55,7 @@ export default {
   data() {
     return {
       users: [
-        // {
-        //   staff_id: 1120401,
+        // { //   staff_id: 1120401,
         //   name: "Ashley Mcdaniel",
         //   dep_name: "資訊部 ",
         //   jobname: "工程師",
@@ -66,20 +65,24 @@ export default {
   },
 
   mounted() {
-    API.post("api/ProjectAnalysis/PostStaffData", {
-      Staffid: "All",
-    })
-      .then((response) => {
-        this.users = response.data.sort((a, b) => {
-          return b.staff_duty - a.staff_duty;
-        });
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-      });
+    this.getAllProjectData();
   },
 
   methods: {
+    getAllProjectData() {
+      API.post("api/ProjectAnalysis/PostStaffData", {
+        Staffid: "All",
+      })
+        .then((response) => {
+          this.users = response.data.sort((a, b) => {
+            return b.staff_duty - a.staff_duty;
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    },
+
     goUserId(id) {
       this.$router.push({
         path: `/user/${id}`,

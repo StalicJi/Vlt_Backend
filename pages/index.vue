@@ -50,7 +50,7 @@
         </div>
 
         <!-- 長條圖 -->
-        <div class="border rounded-lg row-span-3 drop-shadow-lg bg-white pt-5">
+        <div class="border rounded-lg row-span-4 drop-shadow-lg bg-white pt-5">
           <div id="barChart" style="height: 100%; width: 100%"></div>
         </div>
       </div>
@@ -65,7 +65,7 @@
 import API from "../src/api";
 import Button from "../components/element/Button.vue";
 import ProjectSelect from "../components/ProjectSelect.vue";
-import PageTitle from "../components/element/PageTitile.vue";
+import PageTitle from "../components/element/PageTitle.vue";
 import YearOfCal from "../components/YearOfCal.vue";
 import AllStaCard from "../components/element/AllStatisticsCard.vue";
 import * as echarts from "echarts";
@@ -92,7 +92,9 @@ export default {
     };
   },
   mounted() {
-    API.get("/api/ProjectAnalysis/GetProjectData")
+    API.post("api/ProjectAnalysis/GetProjectData", {
+      id: "All",
+    })
       .then((response) => {
         this.ProjectNumber = response.data[0].projectNumber;
         this.ProjecBusinessNumber = response.data[0].projecBusinessNumber;
@@ -126,10 +128,20 @@ export default {
         },
         xAxis: {
           type: "category",
+          axisLabel: {
+            textStyle: {
+              fontSize: 16,
+            },
+          },
           data: ["業務中", "執行中", "保固中", "結案"],
         },
         yAxis: {
           type: "value",
+          axisLabel: {
+            textStyle: {
+              fontSize: 16,
+            },
+          },
         },
         series: [
           {

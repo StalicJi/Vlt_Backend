@@ -1,10 +1,10 @@
 <template>
   <div class="p-7 flex flex-col">
     <div class="flex-btw">
-      <PageTitle icon-name="search" page-title="專案統計數據" />
+      <PageTitle icon-name="search" page-title="個人專案統計數據" />
       <div class="default-btn bg-green-700">
         <VaIcon name="ios_share" size="16px" color="#fff" />
-        <p class="text-white ml-1 text-sm">EXCEL匯出</p>
+        <p class="text-white ml-1 text-sm">匯出</p>
       </div>
     </div>
     <div class="flex flex-col h-full">
@@ -61,43 +61,30 @@
         <div class="flex gap-4 mt-4">
           <Button
             buttonText="總時間統計"
-            class="bg-[#126992] areaBtnBg"
+            class="bg-[#126992] areaChartBg"
             @click="showAreaChartCnt"
           />
           <Button
             buttonText="工作型態統計"
-            class="workBtnBg"
-            @click="showWorkPieChartCnt"
-          />
-          <Button
-            buttonText="人員時間統計"
-            class="emploBtnBg"
-            @click="showEmploPieChartCnt"
+            class="pieChartBg"
+            @click="showPieChartCnt"
           />
         </div>
 
-        <!-- 總時間統計面積圖 -->
+        <!-- 面積圖 -->
         <div
           class="border flex-1 mt-4 py-4 rounded-lg drop-shadow-lg bg-white"
           id="areaChart"
           style="height: 90%; width: 100%"
-          :class="{ hidden: hiddenAreaChart }"
+          :class="{ hidden: showPieChart }"
         ></div>
 
-        <!-- 工作型態統計圓餅圖 -->
+        <!-- 圓餅圖 -->
         <div
           class="border flex-1 mt-4 py-4 rounded-lg drop-shadow-lg bg-white"
-          id="workPieChar"
+          id="pieChart"
           style="height: 90%; width: 100%"
-          :class="{ hidden: hiddenWorkPieChart }"
-        ></div>
-
-        <!-- 人員時間統計圓餅圖 -->
-        <div
-          class="border flex-1 mt-4 py-4 rounded-lg drop-shadow-lg bg-white"
-          id="emploPieChart"
-          style="height: 90%; width: 100%"
-          :class="{ hidden: hiddenEmploPieChart }"
+          :class="{ hidden: !showPieChart }"
         ></div>
       </div>
     </div>
@@ -119,25 +106,16 @@ export default {
 
   data() {
     return {
-      hiddenAreaChart: false,
-      hiddenWorkPieChart: true,
-      hiddenEmploPieChart: true,
+      showPieChart: false,
     };
   },
 
   mounted() {
     this.initAreaChart();
-    this.hiddenAreaChart = !this.hiddenAreaChart;
-    this.hiddenWorkPieChart = !this.hiddenWorkPieChart;
+    this.showPieChart = !this.showPieChart;
     this.$nextTick(() => {
-      this.initWorkPieChar();
-      this.hiddenWorkPieChart = !this.hiddenWorkPieChart;
-      this.hiddenEmploPieChart = !this.hiddenEmploPieChart;
-      this.$nextTick(() => {
-        this.initEmploPieChar();
-        this.hiddenEmploPieChart = !this.hiddenEmploPieChart;
-        this.hiddenAreaChart = !this.hiddenAreaChart;
-      });
+      this.initPieChart();
+      this.showPieChart = !this.showPieChart;
     });
   },
 
@@ -148,7 +126,7 @@ export default {
 
       const option = {
         title: {
-          text: "時間統計面積圖",
+          text: "面積圖",
           textStyle: {
             fontSize: 20,
           },
@@ -174,63 +152,13 @@ export default {
       option && myChart.setOption(option);
     },
 
-    initWorkPieChar() {
-      const chartDom = document.getElementById("workPieChar");
+    initPieChart() {
+      const chartDom = document.getElementById("pieChart");
       const myChart = echarts.init(chartDom);
 
       const option = {
         title: {
-          text: "工作型態統計圓餅圖",
-          textStyle: {
-            fontSize: 20,
-          },
-          left: "center",
-        },
-        tooltip: {
-          trigger: "item",
-          formatter: "{a} <br/>{b} : {c} ({d}%)",
-        },
-        legend: {
-          bottom: 10,
-          left: "center",
-          data: ["CityA", "CityB", "CityD", "CityC", "CityE"],
-        },
-        series: [
-          {
-            type: "pie",
-            radius: "65%",
-            center: ["50%", "50%"],
-            selectedMode: "single",
-            data: [
-              {
-                value: 1548,
-                name: "CityE",
-              },
-              { value: 735, name: "CityC" },
-              { value: 510, name: "CityD" },
-              { value: 434, name: "CityB" },
-              { value: 335, name: "CityA" },
-            ],
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: "rgba(0, 0, 0, 0.5)",
-              },
-            },
-          },
-        ],
-      };
-      option && myChart.setOption(option);
-    },
-
-    initEmploPieChar() {
-      const chartDom = document.getElementById("emploPieChart");
-      const myChart = echarts.init(chartDom);
-
-      const option = {
-        title: {
-          text: "人員時間統計圓餅圖",
+          text: "圓餅圖",
           textStyle: {
             fontSize: 20,
           },
@@ -275,34 +203,21 @@ export default {
     },
 
     //圖表按鈕切換狀態
-    updateChartBackground(areaColor, workColor, emploColor) {
-      const areaBtnBg = document.querySelector(".areaBtnBg");
-      const workBtnBg = document.querySelector(".workBtnBg");
-      const emploBtnBg = document.querySelector(".emploBtnBg");
-      areaBtnBg.style.background = areaColor;
-      workBtnBg.style.background = workColor;
-      emploBtnBg.style.background = emploColor;
+    updateChartBackground(pieColor, areaColor) {
+      const pieChartBg = document.querySelector(".pieChartBg");
+      const areaChartBg = document.querySelector(".areaChartBg");
+      pieChartBg.style.background = pieColor;
+      areaChartBg.style.background = areaColor;
     },
 
     showAreaChartCnt() {
-      this.hiddenAreaChart = false;
-      this.hiddenWorkPieChart = true;
-      this.hiddenEmploPieChart = true;
-      this.updateChartBackground("#126992", "#6B7280", "#6B7280");
+      this.updateChartBackground("#6B7280", "#126992");
+      this.showPieChart = false;
     },
 
-    showWorkPieChartCnt() {
-      this.hiddenAreaChart = true;
-      this.hiddenWorkPieChart = false;
-      this.hiddenEmploPieChart = true;
-      this.updateChartBackground("#6B7280", "#126992", "#6B7280");
-    },
-
-    showEmploPieChartCnt() {
-      this.hiddenAreaChart = true;
-      this.hiddenWorkPieChart = true;
-      this.hiddenEmploPieChart = false;
-      this.updateChartBackground("#6B7280", "#6B7280", "#126992");
+    showPieChartCnt() {
+      this.updateChartBackground("#126992", "#6B7280");
+      this.showPieChart = true;
     },
   },
 };

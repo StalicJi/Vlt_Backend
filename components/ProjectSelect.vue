@@ -61,7 +61,7 @@ export default {
   mounted() {
     if (this.$route.path === "/project") {
       this.getAllSelect();
-    } else if (this.$route.path === `/user/${this.id}`) {
+    } else if (this.$route.path === `/user/${this.id}/selectstaffpoject`) {
       this.getIdSelect(this.id);
     } else {
       console.log("The selector is not in a valid link");
@@ -74,8 +74,15 @@ export default {
         id: "All",
       })
         .then((response) => {
-          this.options = response.data.projectNames;
-          this.valueSingle = response.data.projectNames[0];
+          const allSelectData = response.data;
+          let options = [];
+
+          allSelectData.forEach((data) => {
+            options.push(`${data.pj_name} (${data.pj_id})`);
+          });
+
+          this.options = options;
+          this.valueSingle = "請選擇專案...";
         })
         .catch((error) =>
           console.error("Error fetching all project data:", error)
@@ -87,10 +94,17 @@ export default {
         id: userid,
       })
         .then((response) => {
-          if (response.data.projectNames[0]) {
-            this.options = response.data.projectNames;
-            this.valueSingle = response.data.projectNames[0];
-            // console.log(response.data);
+          if (response) {
+            const staffSelectData = response.data;
+            let options = [];
+
+            staffSelectData.forEach((data) => {
+              options.push(`${data.pj_name} (${data.pj_id})`);
+              // console.log(options);
+            });
+
+            this.options = options;
+            this.valueSingle = "請選擇專案...";
           } else {
             this.valueSingle = "此員工無專案紀錄...";
           }
@@ -100,14 +114,14 @@ export default {
         );
     },
 
-    projectSearch(project_id) {
-      if (this.$route.path === `/user/${this.id}`)
-        this.$router.push({
-          path: `/user/${this.id}/${project_id}`,
-        });
+    // projectSearch(project_id) {
+    //   if (this.$route.path === `/user/${this.id}`)
+    //     this.$router.push({
+    //       path: `/user/${this.id}/${project_id}`,
+    //     });
 
-      if (this.$route.path === "/project") console.log("專案各別查詢:搜尋專案");
-    },
+    //   if (this.$route.path === "/project") console.log("專案各別查詢:搜尋專案");
+    // },
   },
 };
 </script>

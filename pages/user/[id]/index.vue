@@ -4,21 +4,30 @@
     <div class="flex-btw">
       <div class="flex">
         <PageTitle icon-name="person" :page-title="titleUserName" />
+        <Button
+          buttonText="專案查詢"
+          @click="
+            $router.push({
+              path: `/user/${$route.params.id}/selectstaffpoject`,
+            })
+          "
+          class="ml-4"
+        />
       </div>
-      <div class="flex-btw w-72">
-        <h1 class="ml-4 p-2 text-xl">部門：{{ searchDepName }}</h1>
-        <h1 class="ml-4 p-2 text-xl">職稱：{{ searchJobName }}</h1>
+      <div class="flex-btw w-80">
+        <h1 class="ml-4 text-xl">部門：{{ searchDepName }}</h1>
+        <h1 class="ml-4 text-xl">職稱：{{ searchJobName }}</h1>
       </div>
     </div>
 
     <!-- Section -->
     <div class="mt-8 grid grid-flow-col grid-cols-5 gap-4">
       <div class="col-span-2 grid grid-flow-row grid-rows-6 gap-4">
-        <ProjectSelect
+        <!-- <ProjectSelect
           class="row-span-1"
           :id="$route.params.id"
           :project_id="123"
-        />
+        /> -->
 
         <div class="row-span-2 grid grid-cols-2 grid-flow-row gap-4">
           <AllStaCard
@@ -48,7 +57,7 @@
         </div>
 
         <!-- 長條圖 -->
-        <div class="border rounded-lg row-span-3 drop-shadow-lg bg-white pt-5">
+        <div class="border rounded-lg row-span-4 drop-shadow-lg bg-white pt-5">
           <div id="barChart" style="height: 100%; width: 100%"></div>
         </div>
       </div>
@@ -63,7 +72,7 @@
 import API from "../../../src/api";
 import Button from "../../../components/element/Button.vue";
 import ProjectSelect from "../../../components/ProjectSelect.vue";
-import PageTitle from "../../../components/element/PageTitile.vue";
+import PageTitle from "../../../components/element/PageTitle.vue";
 import YearOfCal from "../../../components/YearOfCal.vue";
 import AllStaCard from "../../../components/element/AllStatisticsCard.vue";
 import * as echarts from "echarts";
@@ -75,6 +84,10 @@ export default {
     YearOfCal,
     PageTitle,
     AllStaCard,
+  },
+
+  setup() {
+    const router = useRouter();
   },
 
   data() {
@@ -90,46 +103,54 @@ export default {
     };
   },
   mounted() {
-    //id檢查
-
-    API.post("/api/ProjectAnalysis/PostStaffData", {
-      Staffid: this.$route.params.id,
-    })
-      .then((response) => {
-        const userId = response.data[0].staff_id;
-        // console.log(userId);
-
-        if (userId === this.$route.params.id) {
-          this.searchUserName = response.data[0].name;
-          this.searchDepName = response.data[0].dep_name;
-          this.searchJobName = response.data[0].jobname;
-          this.titleUserName = String(
-            "個人專案統計" + " : " + " " + response.data[0].name
-          );
-        } else {
-          console.error("User ID mismatch");
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-      });
-
-    API.get("/api/ProjectAnalysis/GetProjectData")
-      .then((response) => {
-        this.ProjectNumber = response.data[0].projectNumber;
-        this.ProjecBusinessNumber = response.data[0].projecBusinessNumber;
-        this.ProjectExecutingNumber = response.data[0].projectExecutingNumber;
-        this.ProjectWarrantygNumber = response.data[0].projectWarrantygNumber;
-        this.ProjectClosethecaseNumber =
-          response.data[0].projectClosethecaseNumber;
-
-        this.initBarChart();
-      })
-      .catch((error) => console.error("Error fetching project data:", error));
+    this.getStaffInfo();
+    this.getStaffProjectData();
   },
 
   methods: {
-    initBarChart() {
+    getStaffInfo() {
+      API.post("/api/ProjectAnalysis/PostStaffData", {
+        Staffid: this.$route.params.id,
+      })
+        .then((response) => {
+          const userId = response.data[0].staff_id;
+          // console.log(userId);
+
+          if (userId === this.$route.params.id) {
+            this.searchUserName = response.data[0].name;
+            this.searchDepName = response.data[0].dep_name;
+            this.searchJobName = response.data[0].jobname;
+            this.titleUserName = String(
+              "個人專案統計" + " : " + " " + response.data[0].name
+            );
+          } else {
+            console.error("User ID mismatch");
+          }
+        })
+        .catch((error) => {
+          this.titleUserName = "查無此人";
+          console.error("Error fetching user data:", error);
+        });
+    },
+
+    getStaffProjectData() {
+      API.post("/api/ProjectAnalysis/GetProjectData", {
+        id: this.$route.params.id,
+      })
+        .then((response) => {
+          this.ProjectNumber = response.data[0].projectNumber;
+          this.ProjecBusinessNumber = response.data[0].projecBusinessNumber;
+          this.ProjectExecutingNumber = response.data[0].projectExecutingNumber;
+          this.ProjectWarrantygNumber = response.data[0].projectWarrantygNumber;
+          this.ProjectClosethecaseNumber =
+            response.data[0].projectClosethecaseNumber;
+
+          this.initYBarChart();
+        })
+        .catch((error) => console.error("Error fetching project data:", error));
+    },
+
+    initYBarChart() {
       const chartDom = document.getElementById("barChart");
       const myChart = echarts.init(chartDom);
 
@@ -148,10 +169,20 @@ export default {
         },
         xAxis: {
           type: "category",
+          axisLabel: {
+            textStyle: {
+              fontSize: 16,
+            },
+          },
           data: ["業務中", "執行中", "保固中", "結案"],
         },
         yAxis: {
           type: "value",
+          axisLabel: {
+            textStyle: {
+              fontSize: 16,
+            },
+          },
         },
         series: [
           {

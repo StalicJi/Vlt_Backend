@@ -1,23 +1,6 @@
 <template>
   <div class="grid gap-4 grid-flow-row grid-rows-12 flex-1">
-    <!-- !時間選擇 -->
     <div class="flex gap-4 w-full row-span-1 h-12">
-      <Button
-        buttonText="專案時間"
-        @click="showYBarChartCnt"
-        :class="{
-          'focus:bg-black': activeChart === 'bar',
-          'focus:bg-gray': activeChart !== 'bar',
-        }"
-      />
-      <Button
-        buttonText="工作型態"
-        @click="showPieChartCnt"
-        :class="{
-          'focus:bg-black': activeChart === 'pie',
-          'focus:bg-gray': activeChart !== 'pie',
-        }"
-      />
       <VaDateInput
         id="datetest"
         background="#fff"
@@ -34,18 +17,36 @@
       <Button buttonText="查詢" @click="findChart" />
     </div>
 
+    <div class="flex gap-4">
+      <Button
+        buttonText="專案時間柱狀圖"
+        class="bg-[#126992] yBarBtnBg"
+        @click="showYBarChartCnt"
+      />
+      <Button
+        buttonText="工作型態圓餅圖"
+        class="pieBtnBg"
+        @click="showPieChartCnt"
+      />
+    </div>
     <div
       class="row-span-11 gap-4 border rounded-lg drop-shadow-lg bg-white px-10"
     >
       <!-- 橫向柱狀圖 -->
-      <div class="pt-4 h-full" :class="{ hidden: showPieChart }">
-        <p class="text-center text-xl pb-4">專案進行總時間</p>
-        <div id="yBarChart" style="height: 100%; width: 100%"></div>
+      <div class="pt-8 h-full" :class="{ hidden: showPieChart }">
+        <p class="text-center text-xl pb-8">
+          專案進行總時間 ({{ formatDate(new Date(pjSearchStartTime)) }} ~
+          {{ formatDate(new Date(pjSearchEndTime)) }})
+        </p>
+        <div id="yBarChart" style="height: 85%; width: 100%"></div>
       </div>
       <!-- 圓餅圖 -->
-      <div class="pt-4 h-full" :class="{ hidden: !showPieChart }">
-        <p class="text-center text-xl pb-4">工作型態圓餅圖</p>
-        <div id="pieChart" style="height: 90%; width: 100%"></div>
+      <div class="pt-8 h-full" :class="{ hidden: !showPieChart }">
+        <p class="text-center text-xl pb-8">
+          工作型態圓餅圖 ({{ formatDate(new Date(pjSearchStartTime)) }} ~
+          {{ formatDate(new Date(pjSearchEndTime)) }})
+        </p>
+        <div id="pieChart" style="height: 85%; width: 100%"></div>
       </div>
     </div>
   </div>
@@ -66,13 +67,14 @@ export default {
     const year = date.getFullYear();
     const month = date.getMonth();
     const day = date.getDate();
-
     return {
       value: new Date(year, 0, 1),
       startdate: new Date(year, 0, 1),
       endtdate: new Date(year, month, day),
       showPieChart: false,
-      activeChart: "bar",
+      pjSearchStartTime: "",
+      pjSearchEndTime: "",
+      // activeChart: "bar",
     };
   },
 
@@ -83,7 +85,9 @@ export default {
     let end = year + "-12-31T00:00:00.000Z";
 
     this.creatinitYBarChart(new Date(start), new Date(end));
-    this.showPieChart = !this.showPieChart;
+    // this.showPieChart = !this.showPieChart;
+    this.pjSearchStartTime = this.startdate.toISOString();
+    this.pjSearchEndTime = this.endtdate.toISOString();
     this.$nextTick(() => {
       this.creatinitPieChart(
         new Date(this.startdate).toISOString(),
@@ -96,11 +100,12 @@ export default {
   methods: {
     findChart() {
       const date = new Date();
-      console.log(date);
-      console.log(this.endtdate);
       if (this.endtdate < this.startdate || this.endtdate >= date) {
         alert("錯誤!!結束時間應晚於起始時間");
       } else {
+        this.pjSearchStartTime = this.startdate.toISOString();
+        this.pjSearchEndTime = this.endtdate.toISOString();
+
         this.creatinitYBarChart(
           new Date(this.startdate).toISOString(),
           new Date(this.endtdate).toISOString()
@@ -113,32 +118,37 @@ export default {
     },
 
     // -------------------Chart-------------------
+
     creatinitYBarChart(start, end) {
-      API.post("api/ProjectAnalysis/PostProjectData", {
-        projectnamedata: "2012-16",
+      API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanel", {
+        id: "All",
         startdate: start,
         enddate: end,
       })
         .then((response) => {
+          console.log(response);
           let person = [];
-          let personvalue = [];
+          let personValue = [];
           let series = [];
 
-          for (var key in response.data.personhours) {
+          for (let key in response.data.personhours) {
             if (response.data.personhours.hasOwnProperty(key)) {
               person.push(key);
-              personvalue.push(response.data.personhours[key]);
+              personValue.push(response.data.personhours[key]);
             }
           }
+          // console.log(person);
+          // console.log(personValue);
+
           for (let i = 0; i < response.data.projectList.length; i++) {
             let seriesdata = [];
-            for (let j = 0; j < personvalue.length; j++) {
+            for (let j = 0; j < personValue.length; j++) {
               if (
-                Object.keys(personvalue[j]).includes(
+                Object.keys(personValue[j]).includes(
                   response.data.projectList[i]
                 )
               ) {
-                seriesdata.push(personvalue[j][response.data.projectList[i]]);
+                seriesdata.push(personValue[j][response.data.projectList[i]]);
               } else {
                 seriesdata.push(0);
               }
@@ -150,10 +160,13 @@ export default {
               data: seriesdata,
             });
           }
+          // console.log(series);
 
           let worktypesdata = [];
 
           let worktypeskeys = Object.keys(response.data.worktypes);
+
+          // console.log(worktypesdata);
 
           for (let i = 0; i < worktypeskeys.length; i++) {
             worktypesdata.push({
@@ -161,6 +174,7 @@ export default {
               name: worktypeskeys[i],
             });
           }
+
           this.initYBarChart(person, series);
           this.showPieChart = !this.showPieChart;
           this.$nextTick(() => {
@@ -172,8 +186,8 @@ export default {
     },
 
     creatinitPieChart(start, end) {
-      API.post("api/ProjectAnalysis/PostProjectData", {
-        projectnamedata: "2012-16",
+      API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanel", {
+        id: id,
         startdate: start,
         enddate: end,
       })
@@ -223,7 +237,7 @@ export default {
           type: "scroll",
           top: "top",
           textStyle: {
-            fontSize: 16,
+            fontSize: 18,
           },
           data: series,
         },
@@ -238,6 +252,9 @@ export default {
           name: "小時",
           axisLabel: {
             formatter: "{value}",
+            textStyle: {
+              fontSize: 16,
+            },
           },
         },
         yAxis: {
@@ -246,6 +263,9 @@ export default {
           data: person,
           axisLabel: {
             margin: 20,
+            textStyle: {
+              fontSize: 16,
+            },
           },
         },
         series: series,
@@ -277,27 +297,46 @@ export default {
           type: "scroll",
           top: "top",
           textStyle: {
-            fontSize: 16,
+            fontSize: 18,
           },
         },
         series: [
           {
             type: "pie",
             data: datalist,
+            label: {
+              fontSize: 16,
+            },
           },
         ],
       };
       option && myChart2.setOption(option);
     },
 
+    //圖表按鈕切換狀態
+    updateChartBackground(areaColor, workColor) {
+      const yBarBtnBg = document.querySelector(".yBarBtnBg");
+      const pieBtnBg = document.querySelector(".pieBtnBg");
+      yBarBtnBg.style.background = areaColor;
+      pieBtnBg.style.background = workColor;
+    },
     showYBarChartCnt() {
-      this.activeChart = "bar";
       this.showPieChart = false;
+      this.updateChartBackground("#126992", "#6B7280");
     },
 
     showPieChartCnt() {
-      this.activeChart = "pie";
       this.showPieChart = true;
+      this.updateChartBackground("#6B7280", "#126992");
+    },
+
+    //時間顯示畫面的格式調整
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      return `${year}/${month}/${day}`;
     },
   },
 };

@@ -1,7 +1,7 @@
 <template>
   <div class="p-7">
     <div>
-      <PageTitle icon-name="search" page-title="專案各別查詢" class="" />
+      <PageTitle icon-name="search" page-title="專案各別查詢" />
       <ProjectSelect class="mt-8" />
     </div>
     <div class="grid grid-flow-col grid-cols-6 mt-8 gap-4">
@@ -9,31 +9,31 @@
         className="col-span-1"
         bgColorClass="bg-gray-500"
         title="負責人"
-        cnt="邱育聖"
+        cnt="-"
       />
       <ProjectInfoCard
         className="col-span-1"
         bgColorClass="bg-gray-500"
         title="型態"
-        cnt="研發"
+        cnt="-"
       />
       <ProjectInfoCard
         className="col-span-1"
         bgColorClass="bg-gray-500"
         title="狀態"
-        cnt="進行中"
+        cnt="-"
       />
       <ProjectInfoCard
         className="col-span-1"
         bgColorClass="bg-gray-500"
         title="總花費時間 (小時)"
-        cnt="125"
+        cnt="-"
       />
       <ProjectInfoCard
         className="col-span-2"
         bgColorClass="bg-gray-500"
         title="客戶"
-        cnt="晨豐科技股份有限公司"
+        cnt="-"
       />
     </div>
     <div class="w-full mt-8">
@@ -74,7 +74,7 @@
 
 <script>
 import API from "../../src/api";
-import PageTitle from "../../components/element/PageTitile.vue";
+import PageTitle from "../../components/element/PageTitle.vue";
 import Button from "../../components/element/Button.vue";
 import ProjectSelect from "~/components/ProjectSelect.vue";
 import ProjectInfoCard from "../../components/element/ProjectInfoCard.vue";
