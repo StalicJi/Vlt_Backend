@@ -35,28 +35,28 @@
             borderColor="border-[#ad7596]"
             label="業務中"
             iconName="library_books"
-            :value="ProjecBusinessNumber"
+            :value="parseInt(ProjecBusinessNumber)"
           />
           <AllStaCard
             bgColorClass="bg-[#87AD75]"
             borderColor="border-[#87AD75]"
             label="執行中"
             iconName="code"
-            :value="ProjectExecutingNumber"
+            :value="parseInt(ProjectExecutingNumber)"
           />
           <AllStaCard
             bgColorClass="bg-[#047AE7]"
             borderColor="border-[#047AE7]"
             label="保固中"
             iconName="construction"
-            :value="ProjectWarrantygNumber"
+            :value="parseInt(ProjectWarrantygNumber)"
           />
           <AllStaCard
             bgColorClass="bg-[#e3a74d]"
             borderColor="border-[#e3a74d]"
             label="結案"
             iconName="assignment_turned_in"
-            :value="ProjectClosethecaseNumber"
+            :value="parseInt(ProjectClosethecaseNumber)"
           />
         </div>
 
@@ -174,18 +174,14 @@ export default {
         xAxis: {
           type: "category",
           axisLabel: {
-            textStyle: {
-              fontSize: 16,
-            },
+            fontSize: 16,
           },
           data: ["業務中", "執行中", "保固中", "結案"],
         },
         yAxis: {
           type: "value",
           axisLabel: {
-            textStyle: {
-              fontSize: 16,
-            },
+            fontSize: 16,
           },
         },
         series: [

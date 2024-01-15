@@ -132,14 +132,13 @@ export default {
           enddate: end,
         })
           .then((response) => {
-            let person = [];
+            let yLabel = [];
             let personValue = [];
             let series = [];
 
             for (let key in response.data.personhours) {
               if (response.data.personhours.hasOwnProperty(key)) {
-                person.push(key);
-                // console.log(key);
+                yLabel.push(key);
                 personValue.push(response.data.personhours[key]);
               }
             }
@@ -153,6 +152,7 @@ export default {
                   )
                 ) {
                   seriesdata.push(personValue[j][response.data.projectList[i]]);
+                  // console.log(seriesdata);
                 } else {
                   seriesdata.push(0);
                 }
@@ -165,20 +165,11 @@ export default {
               });
             }
 
-            let worktypesdata = [];
-            let worktypeskeys = Object.keys(response.data.worktypes);
-
-            for (let i = 0; i < worktypeskeys.length; i++) {
-              worktypesdata.push({
-                value: response.data.worktypes[worktypeskeys[i]],
-                name: worktypeskeys[i],
-              });
-            }
-
-            this.initYBarChart(person, series);
+            this.initYBarChart(yLabel, series);
             this.showPieChart = !this.showPieChart;
             this.$nextTick(() => {
-              this.initPieChart(worktypesdata);
+              // this.initPieChart(worktypesdata);
+              this.initPieChart();
               this.showPieChart = !this.showPieChart;
             });
           })
@@ -190,14 +181,32 @@ export default {
           enddate: end,
         })
           .then((response) => {
+            let yLabel = [];
+
+            let seriesdata = [];
             let series = [];
+
             const personhoursData = response.data.personhours;
             for (const projectName in personhoursData) {
               if (personhoursData.hasOwnProperty(projectName)) {
                 const hours = personhoursData[projectName];
-                console.log(`Project: ${projectName}, Hours: ${hours}`);
+                seriesdata.push(hours);
               }
+              yLabel.push(projectName);
             }
+
+            series.push({
+              name: yLabel,
+              type: "bar",
+              data: seriesdata,
+            });
+
+            this.initYBarChart(yLabel, series);
+            this.showPieChart = !this.showPieChart;
+            this.$nextTick(() => {
+              this.initPieChart();
+              this.showPieChart = !this.showPieChart;
+            });
           })
           .catch((error) => console.error(error));
       } else {
@@ -227,11 +236,34 @@ export default {
             this.initPieChart(worktypesdata);
           })
           .catch((error) => console.log(error));
+      } else if (this.$route.path === `/user/${this.id}`) {
+        API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanelPerson", {
+          id: this.id,
+          startdate: start,
+          enddate: end,
+        })
+          .then((response) => {
+            let worktypesdata = [];
+
+            let worktypeskeys = Object.keys(response.data.worktypes);
+
+            for (let i = 0; i < worktypeskeys.length; i++) {
+              worktypesdata.push({
+                value: response.data.worktypes[worktypeskeys[i]],
+                name: worktypeskeys[i],
+              });
+            }
+
+            this.initPieChart(worktypesdata);
+          })
+          .catch((error) => console.error(error));
+      } else {
+        console.log("error path");
       }
     },
 
     // 橫向長條圖
-    initYBarChart(person, series) {
+    initYBarChart(yLabel, series) {
       $(".finddate").click((e) => {
         const date = new Date();
 
@@ -258,7 +290,7 @@ export default {
           type: "scroll",
           top: "top",
           textStyle: {
-            fontSize: 18,
+            fontSize: 16,
           },
           data: series,
         },
@@ -272,20 +304,24 @@ export default {
           type: "value",
           name: "小時",
           axisLabel: {
-            formatter: "{value}",
-            textStyle: {
-              fontSize: 16,
-            },
+            fontSize: 16,
           },
         },
         yAxis: {
           type: "category",
           inverse: true,
-          data: person,
+          data: yLabel,
           axisLabel: {
             margin: 20,
-            textStyle: {
-              fontSize: 16,
+
+            fontSize: 16,
+
+            formatter: function (value) {
+              if (value.length > 4) {
+                return value.substring(0, 4) + "...";
+              } else {
+                return value;
+              }
             },
           },
         },
