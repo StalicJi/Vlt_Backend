@@ -22,7 +22,7 @@
 
     <!-- Section -->
     <div class="mt-8 grid grid-flow-col grid-cols-5 gap-4">
-      <div class="col-span-2 grid grid-flow-row grid-rows-6 gap-4">
+      <div class="col-span-2 grid grid-flow-row grid-rows-5 gap-4">
         <!-- <ProjectSelect
           class="row-span-1"
           :id="$route.params.id"
@@ -32,24 +32,28 @@
         <div class="row-span-2 grid grid-cols-2 grid-flow-row gap-4">
           <AllStaCard
             bgColorClass="bg-[#ad7596]"
+            borderColor="border-[#ad7596]"
             label="業務中"
             iconName="library_books"
             :value="ProjecBusinessNumber"
           />
           <AllStaCard
             bgColorClass="bg-[#87AD75]"
+            borderColor="border-[#87AD75]"
             label="執行中"
             iconName="code"
             :value="ProjectExecutingNumber"
           />
           <AllStaCard
             bgColorClass="bg-[#047AE7]"
+            borderColor="border-[#047AE7]"
             label="保固中"
             iconName="construction"
             :value="ProjectWarrantygNumber"
           />
           <AllStaCard
             bgColorClass="bg-[#e3a74d]"
+            borderColor="border-[#e3a74d]"
             label="結案"
             iconName="assignment_turned_in"
             :value="ProjectClosethecaseNumber"
@@ -57,12 +61,12 @@
         </div>
 
         <!-- 長條圖 -->
-        <div class="border rounded-lg row-span-4 drop-shadow-lg bg-white pt-5">
+        <div class="border rounded-lg row-span-3 drop-shadow-lg bg-white pt-5">
           <div id="barChart" style="height: 100%; width: 100%"></div>
         </div>
       </div>
       <div class="rounded-md drop-shadow-lg col-span-3 flex">
-        <YearOfCal />
+        <YearOfCal :id="$route.params.id" />
       </div>
     </div>
   </div>

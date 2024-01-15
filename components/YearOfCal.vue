@@ -62,6 +62,12 @@ export default {
     Button,
   },
 
+  props: {
+    id: {
+      type: String,
+    },
+  },
+
   data() {
     const date = new Date();
     const year = date.getFullYear();
@@ -74,7 +80,6 @@ export default {
       showPieChart: false,
       pjSearchStartTime: "",
       pjSearchEndTime: "",
-      // activeChart: "bar",
     };
   },
 
@@ -85,9 +90,9 @@ export default {
     let end = year + "-12-31T00:00:00.000Z";
 
     this.creatinitYBarChart(new Date(start), new Date(end));
-    // this.showPieChart = !this.showPieChart;
     this.pjSearchStartTime = this.startdate.toISOString();
     this.pjSearchEndTime = this.endtdate.toISOString();
+    this.showPieChart = !this.showPieChart;
     this.$nextTick(() => {
       this.creatinitPieChart(
         new Date(this.startdate).toISOString(),
@@ -120,92 +125,109 @@ export default {
     // -------------------Chart-------------------
 
     creatinitYBarChart(start, end) {
-      API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanel", {
-        id: "All",
-        startdate: start,
-        enddate: end,
-      })
-        .then((response) => {
-          console.log(response);
-          let person = [];
-          let personValue = [];
-          let series = [];
+      if (this.$route.path === "/") {
+        API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanel", {
+          id: "All",
+          startdate: start,
+          enddate: end,
+        })
+          .then((response) => {
+            let person = [];
+            let personValue = [];
+            let series = [];
 
-          for (let key in response.data.personhours) {
-            if (response.data.personhours.hasOwnProperty(key)) {
-              person.push(key);
-              personValue.push(response.data.personhours[key]);
-            }
-          }
-          // console.log(person);
-          // console.log(personValue);
-
-          for (let i = 0; i < response.data.projectList.length; i++) {
-            let seriesdata = [];
-            for (let j = 0; j < personValue.length; j++) {
-              if (
-                Object.keys(personValue[j]).includes(
-                  response.data.projectList[i]
-                )
-              ) {
-                seriesdata.push(personValue[j][response.data.projectList[i]]);
-              } else {
-                seriesdata.push(0);
+            for (let key in response.data.personhours) {
+              if (response.data.personhours.hasOwnProperty(key)) {
+                person.push(key);
+                // console.log(key);
+                personValue.push(response.data.personhours[key]);
               }
             }
 
-            series.push({
-              name: response.data.projectList[i],
-              type: "bar",
-              data: seriesdata,
-            });
-          }
-          // console.log(series);
+            for (let i = 0; i < response.data.projectList.length; i++) {
+              let seriesdata = [];
+              for (let j = 0; j < personValue.length; j++) {
+                if (
+                  Object.keys(personValue[j]).includes(
+                    response.data.projectList[i]
+                  )
+                ) {
+                  seriesdata.push(personValue[j][response.data.projectList[i]]);
+                } else {
+                  seriesdata.push(0);
+                }
+              }
 
-          let worktypesdata = [];
+              series.push({
+                name: response.data.projectList[i],
+                type: "bar",
+                data: seriesdata,
+              });
+            }
 
-          let worktypeskeys = Object.keys(response.data.worktypes);
+            let worktypesdata = [];
+            let worktypeskeys = Object.keys(response.data.worktypes);
 
-          // console.log(worktypesdata);
+            for (let i = 0; i < worktypeskeys.length; i++) {
+              worktypesdata.push({
+                value: response.data.worktypes[worktypeskeys[i]],
+                name: worktypeskeys[i],
+              });
+            }
 
-          for (let i = 0; i < worktypeskeys.length; i++) {
-            worktypesdata.push({
-              value: response.data.worktypes[worktypeskeys[i]],
-              name: worktypeskeys[i],
-            });
-          }
-
-          this.initYBarChart(person, series);
-          this.showPieChart = !this.showPieChart;
-          this.$nextTick(() => {
-            this.initPieChart(worktypesdata);
+            this.initYBarChart(person, series);
             this.showPieChart = !this.showPieChart;
-          });
+            this.$nextTick(() => {
+              this.initPieChart(worktypesdata);
+              this.showPieChart = !this.showPieChart;
+            });
+          })
+          .catch((error) => console.error(error));
+      } else if (this.$route.path === `/user/${this.id}`) {
+        API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanelPerson", {
+          id: this.id,
+          startdate: start,
+          enddate: end,
         })
-        .catch((error) => console.error(error));
+          .then((response) => {
+            let series = [];
+            const personhoursData = response.data.personhours;
+            for (const projectName in personhoursData) {
+              if (personhoursData.hasOwnProperty(projectName)) {
+                const hours = personhoursData[projectName];
+                console.log(`Project: ${projectName}, Hours: ${hours}`);
+              }
+            }
+          })
+          .catch((error) => console.error(error));
+      } else {
+        console.log("error path");
+      }
     },
 
     creatinitPieChart(start, end) {
-      API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanel", {
-        id: id,
-        startdate: start,
-        enddate: end,
-      })
-        .then((response) => {
-          let worktypesdata = [];
-
-          let worktypeskeys = Object.keys(response.data.worktypes);
-
-          for (let i = 0; i < worktypeskeys.length; i++) {
-            worktypesdata.push({
-              value: response.data.worktypes[worktypeskeys[i]],
-              name: worktypeskeys[i],
-            });
-          }
-
-          this.initPieChart(worktypesdata);
+      if (this.$route.path === "/") {
+        API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanel", {
+          id: "All",
+          startdate: start,
+          enddate: end,
         })
-        .catch((error) => console.log(error));
+          .then((response) => {
+            let worktypesdata = [];
+
+            let worktypeskeys = Object.keys(response.data.worktypes);
+
+            for (let i = 0; i < worktypeskeys.length; i++) {
+              worktypesdata.push({
+                value: response.data.worktypes[worktypeskeys[i]],
+                name: worktypeskeys[i],
+              });
+            }
+
+            this.initPieChart(worktypesdata);
+          })
+          .catch((error) => console.log(error));
+      }
     },
 
     // 橫向長條圖
@@ -216,7 +238,6 @@ export default {
         if (this.endtdate < this.startdate || this.endtdate >= date) {
           console.log("myChart");
         } else {
-          // console.log(this.endtdate);
           myChart.clear();
         }
       });
