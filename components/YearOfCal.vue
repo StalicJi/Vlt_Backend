@@ -80,6 +80,7 @@ export default {
       showPieChart: false,
       pjSearchStartTime: "",
       pjSearchEndTime: "",
+      myChart2: null,
     };
   },
 
@@ -89,10 +90,11 @@ export default {
     let start = year + "-01-01T00:00:00.000Z";
     let end = year + "-12-31T00:00:00.000Z";
 
-    this.creatinitYBarChart(new Date(start), new Date(end));
     this.pjSearchStartTime = this.startdate.toISOString();
     this.pjSearchEndTime = this.endtdate.toISOString();
+    this.creatinitYBarChart(new Date(start), new Date(end));
     this.showPieChart = !this.showPieChart;
+
     this.$nextTick(() => {
       this.creatinitPieChart(
         new Date(this.startdate).toISOString(),
@@ -140,6 +142,7 @@ export default {
               if (response.data.personhours.hasOwnProperty(key)) {
                 yLabel.push(key);
                 personValue.push(response.data.personhours[key]);
+                // console.log(personValue);
               }
             }
 
@@ -155,6 +158,7 @@ export default {
                   // console.log(seriesdata);
                 } else {
                   seriesdata.push(0);
+                  // console.log(seriesdata);
                 }
               }
 
@@ -164,11 +168,10 @@ export default {
                 data: seriesdata,
               });
             }
-
             this.initYBarChart(yLabel, series);
             this.showPieChart = !this.showPieChart;
+
             this.$nextTick(() => {
-              // this.initPieChart(worktypesdata);
               this.initPieChart();
               this.showPieChart = !this.showPieChart;
             });
@@ -232,8 +235,9 @@ export default {
                 name: worktypeskeys[i],
               });
             }
-
-            this.initPieChart(worktypesdata);
+            setTimeout(() => {
+              this.initPieChart(worktypesdata);
+            }, 500);
           })
           .catch((error) => console.log(error));
       } else if (this.$route.path === `/user/${this.id}`) {
@@ -253,8 +257,9 @@ export default {
                 name: worktypeskeys[i],
               });
             }
-
-            this.initPieChart(worktypesdata);
+            setTimeout(() => {
+              this.initPieChart(worktypesdata);
+            }, 500);
           })
           .catch((error) => console.error(error));
       } else {
@@ -264,16 +269,6 @@ export default {
 
     // 橫向長條圖
     initYBarChart(yLabel, series) {
-      $(".finddate").click((e) => {
-        const date = new Date();
-
-        if (this.endtdate < this.startdate || this.endtdate >= date) {
-          console.log("myChart");
-        } else {
-          myChart.clear();
-        }
-      });
-
       const chartDom = document.getElementById("yBarChart");
       if (!chartDom) return;
 
@@ -313,9 +308,7 @@ export default {
           data: yLabel,
           axisLabel: {
             margin: 20,
-
             fontSize: 16,
-
             formatter: function (value) {
               if (value.length > 4) {
                 return value.substring(0, 4) + "...";
@@ -333,19 +326,11 @@ export default {
 
     // 圓餅圖
     initPieChart(datalist) {
-      $(".finddate").click((e) => {
-        const date = new Date();
-        console.log(date);
-        if (this.endtdate < this.startdate || this.endtdate >= date) {
-          console.log("myChart");
-        } else {
-          myChart2.clear();
-        }
-      });
       const chartDom = document.getElementById("pieChart");
       if (!chartDom) return;
 
       const myChart2 = echarts.init(chartDom);
+
       const option = {
         tooltip: {
           show: true,
@@ -354,7 +339,7 @@ export default {
           type: "scroll",
           top: "top",
           textStyle: {
-            fontSize: 18,
+            fontSize: 16,
           },
         },
         series: [
