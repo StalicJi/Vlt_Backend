@@ -118,7 +118,7 @@ export default {
       //   });
 
       if (this.$route.path === "/project") {
-        console.log(this.selectPj_id);
+        // console.log(this.selectPj_id);
         this.$emit("selectId", this.selectPj_id);
       }
     },

@@ -36,7 +36,7 @@
         :cnt="customer"
       />
     </div>
-    <div class="w-full mt-8">
+    <div class="w-full mt-8" v-if="users.length > 0">
       <table class="w-full">
         <thead class="w-full">
           <tr class="text-center border-b-[1px] bg-gray-500 text-white">
@@ -65,10 +65,11 @@
         <Button
           buttonText="進階圖表"
           btnColor="bg-rose-700"
-          @click="goAdvCharts()"
+          @click="goAdvCharts(projectId)"
         />
       </div>
     </div>
+    <div v-else></div>
   </div>
 </template>
 
@@ -109,12 +110,19 @@ export default {
         id: project_id,
       })
         .then((response) => {
-          console.log(response);
-          this.projectManager = response.data.pm;
-          this.projectStatus = response.data.projectStatus;
-          this.projectType = response.data.projectType;
-          this.totalHours = response.data.totalHours;
-          this.customer = response.data.customer;
+          if (response.status === 204) {
+            this.projectManager = "無資料";
+            this.projectStatus = "無資料";
+            this.projectType = "無資料";
+            this.totalHours = "無資料";
+            this.customer = "無資料";
+          } else {
+            this.projectManager = response.data.pm;
+            this.projectStatus = response.data.projectStatus;
+            this.projectType = response.data.projectType;
+            this.totalHours = response.data.totalHours;
+            this.customer = response.data.customer;
+          }
         })
         .catch((error) => {
           this.projectManager = "-";
@@ -122,6 +130,7 @@ export default {
           this.projectType = "-";
           this.totalHours = "-";
           this.customer = "-";
+          console.error(error);
         });
     },
 
@@ -133,10 +142,11 @@ export default {
         }
       )
         .then((response) => {
-          const memberData = response.data;
-          memberData.forEach((member) => {
-            this.users.push(member);
-          });
+          if (response.status === 204) {
+            this.users = [];
+          } else {
+            this.users = response.data;
+          }
         })
         .catch((error) => {
           console.error(error);
@@ -145,14 +155,13 @@ export default {
 
     getSelectPjId(pj_id) {
       this.projectId = pj_id;
-
       this.getProjectInfo(this.projectId);
       this.getProjectTeam(this.projectId);
     },
 
-    goAdvCharts(id) {
+    goAdvCharts(pj_id) {
       this.$router.push({
-        path: `/project/adv_charts/${id}`,
+        path: `/project/adv_charts/${pj_id}`,
       });
     },
   },

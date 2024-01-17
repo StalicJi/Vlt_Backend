@@ -4,7 +4,7 @@
       <PageTitle icon-name="search" page-title="專案統計數據" />
       <div class="default-btn bg-green-700">
         <VaIcon name="ios_share" size="16px" color="#fff" />
-        <p class="text-white ml-1 text-sm">EXCEL匯出</p>
+        <p class="text-white ml-1 text-sm">匯出</p>
       </div>
     </div>
     <div class="flex flex-col h-full">
@@ -13,31 +13,31 @@
           className="col-span-1"
           bgColorClass="bg-gray-500"
           title="負責人"
-          cnt="邱育聖"
+          :cnt="projectManager"
         />
         <ProjectInfoCard
           className="col-span-1"
           bgColorClass="bg-gray-500"
           title="型態"
-          cnt="研發"
+          :cnt="projectType"
         />
         <ProjectInfoCard
           className="col-span-1"
           bgColorClass="bg-gray-500"
           title="狀態"
-          cnt="進行中"
+          :cnt="projectStatus"
         />
         <ProjectInfoCard
           className="col-span-1"
           bgColorClass="bg-gray-500"
           title="總花費時間 (小時)"
-          cnt="125"
+          :cnt="totalHours"
         />
         <ProjectInfoCard
           className="col-span-2"
           bgColorClass="bg-gray-500"
-          title="專案名稱"
-          :cnt="$route.params.project_id"
+          title="客戶"
+          :cnt="customer"
         />
       </div>
 
@@ -105,6 +105,7 @@
 </template>
 
 <script>
+import API from "~/src/api";
 import PageTitle from "~/components/element/PageTitle.vue";
 import ProjectInfoCard from "~/components/element/ProjectInfoCard.vue";
 import Button from "~/components/element/Button.vue";
@@ -122,10 +123,16 @@ export default {
       hiddenAreaChart: false,
       hiddenWorkPieChart: true,
       hiddenEmploPieChart: true,
+      projectManager: "",
+      projectStatus: "",
+      projectType: "",
+      totalHours: "",
+      customer: "",
     };
   },
 
   mounted() {
+    this.getProjectInfo(this.$route.params.id);
     this.initAreaChart();
     this.hiddenAreaChart = !this.hiddenAreaChart;
     this.hiddenWorkPieChart = !this.hiddenWorkPieChart;
@@ -142,6 +149,35 @@ export default {
   },
 
   methods: {
+    getProjectInfo(project_id) {
+      API.post("api/ProjectAnalysis/GetindividualProjectInformation", {
+        id: project_id,
+      })
+        .then((response) => {
+          if (response.status === 204) {
+            this.projectManager = "無資料";
+            this.projectStatus = "無資料";
+            this.projectType = "無資料";
+            this.totalHours = "無資料";
+            this.customer = "無資料";
+          } else {
+            this.projectManager = response.data.pm;
+            this.projectStatus = response.data.projectStatus;
+            this.projectType = response.data.projectType;
+            this.totalHours = response.data.totalHours;
+            this.customer = response.data.customer;
+          }
+        })
+        .catch((error) => {
+          this.projectManager = "-";
+          this.projectStatus = "-";
+          this.projectType = "-";
+          this.totalHours = "-";
+          this.customer = "-";
+          console.error(error);
+        });
+    },
+
     initAreaChart() {
       const chartDom = document.getElementById("areaChart");
       const myChart = echarts.init(chartDom);
