@@ -2,38 +2,38 @@
   <div class="p-7">
     <div>
       <PageTitle icon-name="search" page-title="專案各別查詢" />
-      <ProjectSelect class="mt-8" />
+      <ProjectSelect class="mt-8" @selectId="getSelectPjId" />
     </div>
     <div class="grid grid-flow-col grid-cols-6 mt-8 gap-4">
       <ProjectInfoCard
         className="col-span-1"
         bgColorClass="bg-gray-500"
         title="負責人"
-        cnt="-"
+        :cnt="projectManager"
       />
       <ProjectInfoCard
         className="col-span-1"
         bgColorClass="bg-gray-500"
         title="型態"
-        cnt="-"
+        :cnt="projectType"
       />
       <ProjectInfoCard
         className="col-span-1"
         bgColorClass="bg-gray-500"
         title="狀態"
-        cnt="-"
+        :cnt="projectStatus"
       />
       <ProjectInfoCard
         className="col-span-1"
         bgColorClass="bg-gray-500"
         title="總花費時間 (小時)"
-        cnt="-"
+        :cnt="totalHours"
       />
       <ProjectInfoCard
         className="col-span-2"
         bgColorClass="bg-gray-500"
         title="客戶"
-        cnt="-"
+        :cnt="customer"
       />
     </div>
     <div class="w-full mt-8">
@@ -50,14 +50,14 @@
         <tbody class="w-full">
           <tr
             v-for="user in users"
-            :key="user.staff_id"
+            :key="user.staffid"
             class="text-center border-b-2 hover:bg-gray-200"
           >
-            <td class="py-2">{{ user.staff_id }}</td>
-            <td class="py-2">{{ user.name }}</td>
-            <td class="py-2">{{ user.dep_name }}</td>
-            <td class="py-2">{{ user.jobname }}</td>
-            <td class="py-2">{{ user.total_time }}</td>
+            <td class="py-2">{{ user.staffid }}</td>
+            <td class="py-2">{{ user.staffidname }}</td>
+            <td class="py-2">{{ user.dep }}</td>
+            <td class="py-2">{{ user.job }}</td>
+            <td class="py-2">{{ user.hour }}</td>
           </tr>
         </tbody>
       </table>
@@ -65,7 +65,7 @@
         <Button
           buttonText="進階圖表"
           btnColor="bg-rose-700"
-          @click="goAdvCharts(this.projectId)"
+          @click="goAdvCharts()"
         />
       </div>
     </div>
@@ -89,55 +89,65 @@ export default {
   data() {
     return {
       projectId: "",
-      users: [
-        {
-          staff_id: 1120401,
-          name: "Ashley Mcdaniel",
-          dep_name: "資訊部 ",
-          jobname: "工程師",
-          total_time: "45",
-        },
-        {
-          staff_id: 1110305,
-          name: "John Cena",
-          dep_name: "資訊部 ",
-          jobname: "工程師",
-          total_time: "20.5",
-        },
-        {
-          staff_id: 1120401,
-          name: "Ashley Mcdaniel",
-          dep_name: "資訊部 ",
-          jobname: "工程師",
-          total_time: "45",
-        },
-        {
-          staff_id: 1110305,
-          name: "John Cena",
-          dep_name: "資訊部 ",
-          jobname: "工程師",
-          total_time: "20.5",
-        },
-      ],
+      users: [],
+      projectManager: "",
+      projectStatus: "",
+      projectType: "",
+      totalHours: "",
+      customer: "",
     };
   },
 
   mounted() {
-    this.getAllSelect();
+    this.getProjectInfo();
+    this.getProjectTeam();
   },
 
   methods: {
-    getAllSelect() {
-      API.post("api/ProjectAnalysis/ProjectSelector", {
-        id: "All",
+    getProjectInfo(project_id) {
+      API.post("api/ProjectAnalysis/GetindividualProjectInformation", {
+        id: project_id,
       })
         .then((response) => {
-          this.options = response.data.projectNames;
-          this.projectId = response.data.projectNames[0];
+          console.log(response);
+          this.projectManager = response.data.pm;
+          this.projectStatus = response.data.projectStatus;
+          this.projectType = response.data.projectType;
+          this.totalHours = response.data.totalHours;
+          this.customer = response.data.customer;
         })
-        .catch((error) =>
-          console.error("Error fetching all project data:", error)
-        );
+        .catch((error) => {
+          this.projectManager = "-";
+          this.projectStatus = "-";
+          this.projectType = "-";
+          this.totalHours = "-";
+          this.customer = "-";
+        });
+    },
+
+    getProjectTeam(project_id) {
+      API.post(
+        "api/ProjectAnalysis/GetindividualProjectInformationPersonList",
+        {
+          id: project_id,
+        }
+      )
+        .then((response) => {
+          const memberData = response.data;
+          memberData.forEach((member) => {
+            this.users.push(member);
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+
+    getSelectPjId(pj_id) {
+      this.projectId = pj_id;
+
+      this.getProjectInfo(this.projectId);
+      this.getProjectTeam(this.projectId);
     },
 
     goAdvCharts(id) {

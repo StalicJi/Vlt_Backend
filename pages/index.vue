@@ -5,12 +5,12 @@
       <PageTitle icon-name="bar_chart" page-title="專案統計" />
       <div class="flex">
         <Button
-          buttonText="專案各別查詢"
+          buttonText="專案查詢"
           @click="$router.push({ path: '/project' })"
           class="ml-2"
         />
         <Button
-          buttonText="個人專案查詢"
+          buttonText="個人查詢"
           @click="$router.push({ path: '/user' })"
           class="ml-2"
         />

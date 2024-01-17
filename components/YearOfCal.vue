@@ -107,8 +107,15 @@ export default {
   methods: {
     findChart() {
       const date = new Date();
-      if (this.endtdate < this.startdate || this.endtdate >= date) {
-        alert("錯誤!!結束時間應晚於起始時間");
+      const twoYearsAgo = new Date();
+      twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+
+      if (this.endtdate < this.startdate) {
+        alert("結束時間應晚於起始時間");
+      } else if (this.startdate <= twoYearsAgo) {
+        alert("搜尋區間應在兩年以內");
+      } else if (this.endtdate >= date) {
+        alert("結束時間應早於當前時間");
       } else {
         this.pjSearchStartTime = this.startdate.toISOString();
         this.pjSearchEndTime = this.endtdate.toISOString();
@@ -237,7 +244,7 @@ export default {
             }
             setTimeout(() => {
               this.initPieChart(worktypesdata);
-            }, 500);
+            }, 800);
           })
           .catch((error) => console.log(error));
       } else if (this.$route.path === `/user/${this.id}`) {
@@ -259,7 +266,7 @@ export default {
             }
             setTimeout(() => {
               this.initPieChart(worktypesdata);
-            }, 500);
+            }, 800);
           })
           .catch((error) => console.error(error));
       } else {

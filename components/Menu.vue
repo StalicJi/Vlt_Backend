@@ -54,7 +54,7 @@
             hover-color="textInverted"
             class="hover:shadow-lg"
           >
-            <VaSidebarItemContent>
+            <VaSidebarItemContent @click="$router.push(item.router)">
               <VaIcon :name="item.icon" />
               <VaSidebarItemTitle>{{ item.title }}</VaSidebarItemTitle>
             </VaSidebarItemContent>
@@ -74,9 +74,7 @@ import { ref } from "vue";
 
 const activeElement = ref("專案統計");
 
-// const goToHome = () => {
-//   router.push({ path: "/" });
-// };
+const router = useRouter();
 
 const items = [
   // {
@@ -115,7 +113,7 @@ const items = [
   //   children: [{ title: "維護" }, { title: "檢視" }],
   // },
 
-  { title: "專案統計", icon: "bar_chart" },
+  { title: "專案統計", icon: "bar_chart", router: "/" },
   // {
   //   title: "個人設定",
   //   icon: "settings",

@@ -4,7 +4,7 @@
   >
     <div class="flex-btw">
       <p class="text-white">專案選擇器</p>
-      <Button buttonText="查詢" @click="projectSearch(this.valueSingle)" />
+      <Button buttonText="查詢" @click="projectSearch" />
     </div>
     <div class="mt-4 px-2">
       <VaSelect
@@ -28,33 +28,22 @@ export default {
   },
 
   props: {
-    id: {
+    // id: {
+    //   type: String,
+    //   default: "",
+    // },
+    selectedProjectId: {
       type: String,
       default: "",
-    },
-    project_id: {
-      type: String && Number,
-    },
-    handelSearch: {
-      type: Function,
     },
   },
   name: "Searchable",
 
   data() {
     return {
-      options: [
-        // "員工園地專案統計功能開發",
-        // "113年-嘉義市路燈管理系統軟體顧問服務維護",
-        // "好水源網站",
-        // "臺南市都市發展資訊系統",
-        // "屏東7建物",
-        // "112年北宜高網站功能增修",
-        // "112年晨豐科技官方網站變更設計計畫",
-        // "110年度新竹縣公共設施管線位置調查暨系統建置計畫委託資訊服務案",
-      ],
-      // valueSingle: "員工園地專案統計功能開發",
+      options: [],
       valueSingle: "",
+      selectPj_id: "",
     };
   },
 
@@ -66,6 +55,15 @@ export default {
     } else {
       console.log("The selector is not in a valid link");
     }
+  },
+
+  watch: {
+    valueSingle(newValue) {
+      const reversedValue = newValue.split("").reverse().join("");
+      const extractedSubstring = reversedValue.slice(1, 8);
+      const finalResult = extractedSubstring.split("").reverse().join("");
+      this.selectPj_id = finalResult;
+    },
   },
 
   methods: {
@@ -80,7 +78,6 @@ export default {
           allSelectData.forEach((data) => {
             options.push(`${data.pj_name} (${data.pj_id})`);
           });
-
           this.options = options;
           this.valueSingle = "請選擇專案...";
         })
@@ -114,14 +111,17 @@ export default {
         );
     },
 
-    // projectSearch(project_id) {
-    //   if (this.$route.path === `/user/${this.id}`)
-    //     this.$router.push({
-    //       path: `/user/${this.id}/${project_id}`,
-    //     });
+    projectSearch() {
+      // if (this.$route.path === `/user/${this.id}`)
+      //   this.$router.push({
+      //     path: `/user/${this.id}/${project_id}`,
+      //   });
 
-    //   if (this.$route.path === "/project") console.log("專案各別查詢:搜尋專案");
-    // },
+      if (this.$route.path === "/project") {
+        console.log(this.selectPj_id);
+        this.$emit("selectId", this.selectPj_id);
+      }
+    },
   },
 };
 </script>

@@ -23,12 +23,6 @@
     <!-- Section -->
     <div class="mt-8 grid grid-flow-col grid-cols-5 gap-4">
       <div class="col-span-2 grid grid-flow-row grid-rows-5 gap-4">
-        <!-- <ProjectSelect
-          class="row-span-1"
-          :id="$route.params.id"
-          :project_id="123"
-        /> -->
-
         <div class="row-span-2 grid grid-cols-2 grid-flow-row gap-4">
           <AllStaCard
             bgColorClass="bg-[#ad7596]"
