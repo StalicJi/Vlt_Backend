@@ -28,10 +28,10 @@ export default {
   },
 
   props: {
-    // id: {
-    //   type: String,
-    //   default: "",
-    // },
+    id: {
+      type: String,
+      default: "",
+    },
     selectedProjectId: {
       type: String,
       default: "",
@@ -112,10 +112,10 @@ export default {
     },
 
     projectSearch() {
-      // if (this.$route.path === `/user/${this.id}`)
-      //   this.$router.push({
-      //     path: `/user/${this.id}/${project_id}`,
-      //   });
+      if (this.$route.path === `/user/${this.id}`)
+        this.$router.push({
+          path: `/user/${this.id}/${project_id}`,
+        });
 
       if (this.$route.path === "/project") {
         // console.log(this.selectPj_id);

@@ -2,9 +2,9 @@
   <div class="p-7 flex flex-col">
     <div class="flex-btw">
       <PageTitle icon-name="search" page-title="個人專案統計數據" />
-      <div class="default-btn bg-green-700">
+      <div class="default-btn bg-green-700" @click="openDialog">
         <VaIcon name="ios_share" size="16px" color="#fff" />
-        <p class="text-white ml-1 text-sm">匯出</p>
+        <p class="text-white ml-1 text-sm">EXCEL</p>
       </div>
     </div>
     <div class="flex flex-col h-full">
@@ -200,6 +200,10 @@ export default {
         ],
       };
       option && myChart.setOption(option);
+    },
+
+    openDialog() {
+      this.$emit("openDialog");
     },
 
     //圖表按鈕切換狀態

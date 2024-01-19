@@ -1,10 +1,10 @@
 <template>
   <div class="p-7 flex flex-col">
     <div class="flex-btw">
-      <PageTitle icon-name="search" page-title="專案統計數據" />
-      <div class="default-btn bg-green-700">
+      <PageTitle icon-name="search" :page-title="projectTitle" />
+      <div class="default-btn bg-green-700" @click="openDialog">
         <VaIcon name="ios_share" size="16px" color="#fff" />
-        <p class="text-white ml-1 text-sm">匯出</p>
+        <p class="text-white ml-1 text-sm">EXCEL</p>
       </div>
     </div>
     <div class="flex flex-col h-full">
@@ -101,6 +101,7 @@
         ></div>
       </div>
     </div>
+    <!-- <export-dialog /> -->
   </div>
 </template>
 
@@ -128,11 +129,13 @@ export default {
       projectType: "",
       totalHours: "",
       customer: "",
+      projectTitle: "專案名稱:",
     };
   },
 
   mounted() {
     this.getProjectInfo(this.$route.params.id);
+    this.getProjectTitle();
     this.initAreaChart();
     this.hiddenAreaChart = !this.hiddenAreaChart;
     this.hiddenWorkPieChart = !this.hiddenWorkPieChart;
@@ -154,6 +157,7 @@ export default {
         id: project_id,
       })
         .then((response) => {
+          console.log(response);
           if (response.status === 204) {
             this.projectManager = "無資料";
             this.projectStatus = "無資料";
@@ -176,6 +180,21 @@ export default {
           this.customer = "-";
           console.error(error);
         });
+    },
+
+    getProjectTitle() {
+      API.post("api/ProjectAnalysis/ProjectSelector", {
+        id: "All",
+      })
+        .then((response) => {
+          const projectData = response.data;
+          projectData.forEach((data) => {
+            if (data.pj_id === this.$route.params.id) {
+              this.projectTitle = String(`專案名稱：${data.pj_name}`);
+            }
+          });
+        })
+        .catch((error) => console.error(error));
     },
 
     initAreaChart() {
@@ -308,6 +327,10 @@ export default {
         ],
       };
       option && myChart.setOption(option);
+    },
+
+    openDialog() {
+      this.$emit("openDialog");
     },
 
     //圖表按鈕切換狀態

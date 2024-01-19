@@ -66,12 +66,12 @@
 </template>
 
 <script>
-import API from "../src/api";
-import Button from "../components/element/Button.vue";
-import ProjectSelect from "../components/ProjectSelect.vue";
-import PageTitle from "../components/element/PageTitle.vue";
-import YearOfCal from "../components/YearOfCal.vue";
-import AllStaCard from "../components/element/AllStatisticsCard.vue";
+import API from "~/src/api";
+import Button from "~/components/element/Button.vue";
+import ProjectSelect from "~/components/ProjectSelect.vue";
+import PageTitle from "~/components/element/PageTitle.vue";
+import YearOfCal from "~/components/YearOfCal.vue";
+import AllStaCard from "~/components/element/AllStatisticsCard.vue";
 import * as echarts from "echarts";
 
 export default {

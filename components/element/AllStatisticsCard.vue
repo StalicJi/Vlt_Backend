@@ -49,6 +49,9 @@ export default {
   methods: {
     goAllInfoPage() {
       console.log("click");
+      this.$router.push({
+        path: "/projectstatus",
+      });
     },
   },
 };

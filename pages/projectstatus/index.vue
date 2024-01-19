@@ -1,0 +1,161 @@
+<template>
+  <div class="p-7">
+    <div>
+      <PageTitle icon-name="search" page-title="專案狀態查詢" />
+    </div>
+
+    <div class="flex justify-end gap-4 mt-8 w-full">
+      <div class="flex items-center gap-4">
+        <label>專案狀態 : </label>
+        <div class="w-28">
+          <VaSelect
+            v-model="valueSingle"
+            :options="options"
+            highlight-matched-text
+            background="#fff"
+            color="info"
+          />
+        </div>
+      </div>
+      <div class="flex gap-4 items-center">
+        <label>專案創始日 : </label>
+        <div class="w-40">
+          <VaDateInput
+            id="datetest"
+            background="#fff"
+            color="info"
+            placeholder="請選擇日期"
+            v-model="startdate"
+          />
+        </div>
+        <span>~</span>
+        <div class="w-40">
+          <VaDateInput
+            background="#fff"
+            color="info"
+            placeholder="請選擇日期"
+            v-model="endtdate"
+          />
+        </div>
+        <Button buttonText="查詢" @click="searchStatus" />
+      </div>
+    </div>
+
+    <div class="w-full mt-8">
+      <table class="w-full">
+        <thead class="w-full">
+          <tr class="text-center border-b-[1px] bg-gray-500 text-white">
+            <th class="py-4">專案編號</th>
+            <th class="py-4">專案名稱</th>
+            <th class="py-4">客戶</th>
+            <th class="py-4">狀態</th>
+            <th class="py-4">負責人</th>
+            <th class="py-4"></th>
+          </tr>
+        </thead>
+        <div v-if="loading" class="text-center">Loading...</div>
+        <tbody class="w-full" v-show="showTable">
+          <tr
+            class="text-center border-b-2 hover:bg-gray-200"
+            v-for="project in projects"
+            :key="project.pjId"
+          >
+            <td class="py-2">{{ project.pjId }}</td>
+            <td class="py-2">{{ project.pjName }}</td>
+            <td class="py-2">{{ project.pjCustomer }}</td>
+            <td class="py-2">{{ project.pjType }}</td>
+            <td class="py-2">{{ project.pjManager }}</td>
+            <td class="flex-center py-2">
+              <Button buttonText="匯出" class="bg-green-700" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-if="error" class="text-red-500">{{ error }}</div>
+    </div>
+  </div>
+</template>
+
+<script>
+import API from "~/src/api";
+import PageTitle from "~/components/element/PageTitle";
+import Button from "~/components/element/Button.vue";
+
+export default {
+  components: {
+    PageTitle,
+    Button,
+  },
+  data() {
+    return {
+      projects: [],
+      options: ["業務中", "執行中", "保固中", "結案"],
+      valueSingle: "業務中",
+      loading: false,
+      error: null,
+      showTable: true,
+    };
+  },
+
+  mounted() {
+    // this.getProjectStatus();
+  },
+
+  // watch: {
+  //   valueSingle(newValue) {
+  //     // this.getProjectStatus(newValue);
+  //     console.log(newValue);
+  //   },
+  // },
+
+  methods: {
+    getProjectStatus(selectedOption) {
+      this.loading = true;
+      const typeMapping = {
+        業務中: "S",
+        執行中: "E",
+        保固中: "M",
+        結案: "F",
+      };
+
+      const selectedType = typeMapping[selectedOption];
+      API.post("api/ProjectAnalysis/GetDetailProjectData", {
+        id: "All",
+        type: selectedType,
+        startdate: null,
+        enddate: "2024-01-18T05:36:44.222Z",
+      })
+        .then((response) => {
+          // Set a timeout to update projects after 3 seconds
+          setTimeout(() => {
+            this.projects = response.data.sort((a, b) => {
+              const aId = a.pjId.split("-");
+              const bId = b.pjId.split("-");
+
+              const aComparable = parseInt(aId[0] + aId[1]);
+              const bComparable = parseInt(bId[0] + bId[1]);
+
+              return bComparable - aComparable;
+            });
+
+            // Hide loading indicator immediately after updating projects
+            this.loading = false;
+            this.showTable = true;
+          }, 3000);
+        })
+        .catch((error) => {
+          this.loading = false;
+          this.error = "Error fetching data. Please try again.";
+          console.error(error);
+          console.log(error);
+        });
+    },
+
+    searchStatus() {
+      this.projects = [];
+      this.showTable = false;
+      this.getProjectStatus(this.valueSingle);
+    },
+  },
+};
+</script>
