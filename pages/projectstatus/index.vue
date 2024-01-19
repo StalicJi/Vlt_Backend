@@ -118,6 +118,11 @@ export default {
     };
   },
 
+  created() {
+    this.getProjectStatus(this.$route.query.status);
+    this.valueSingle = this.$route.query.status;
+  },
+
   computed: {
     totalPages() {
       return Math.ceil(this.projects.length / this.itemsPerPage);
@@ -184,6 +189,10 @@ export default {
       this.projects = [];
       this.showTable = false;
       this.getProjectStatus(this.valueSingle);
+      this.$router.push({
+        path: "/projectstatus",
+        query: { status: this.valueSingle },
+      });
     },
   },
 };

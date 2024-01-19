@@ -181,10 +181,11 @@ export default {
     },
 
     goAllInfoPage(label) {
-      console.log("Navigating to project status page with label:", label);
+      console.log(label);
 
       this.$router.push({
         path: "/projectstatus",
+        query: { status: label },
       });
     },
   },
