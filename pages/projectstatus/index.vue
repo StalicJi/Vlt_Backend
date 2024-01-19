@@ -4,7 +4,7 @@
       <PageTitle icon-name="search" page-title="專案狀態查詢" />
     </div>
 
-    <div class="flex justify-end gap-4 mt-8 w-full">
+    <div class="flex justify-end gap-4 w-full">
       <div class="flex items-center gap-4">
         <label>專案狀態 : </label>
         <div class="w-28">
@@ -53,11 +53,18 @@
             <th class="py-4"></th>
           </tr>
         </thead>
-        <div v-if="loading" class="text-center">Loading...</div>
+
+        <VaInnerLoading
+          loading
+          class="relative top-12 left-[135%]"
+          color="#6b7280"
+          v-if="loading"
+        />
+
         <tbody class="w-full" v-show="showTable">
           <tr
             class="text-center border-b-2 hover:bg-gray-200"
-            v-for="project in projects"
+            v-for="project in displayedProjects"
             :key="project.pjId"
           >
             <td class="py-2">{{ project.pjId }}</td>
@@ -71,8 +78,20 @@
           </tr>
         </tbody>
       </table>
-      <div v-if="error" class="text-red-500">{{ error }}</div>
+      <div v-if="error" class="text-red-500 w-full h-20 flex-center text-xl">
+        {{ error }}
+      </div>
     </div>
+    <VaPagination
+      v-model="currentPage"
+      :pages="totalPages"
+      :visible-pages="3"
+      buttons-preset="secondary"
+      color="#6b7280"
+      active-page-color="#126992"
+      class="justify-center sm:justify-start mt-4"
+      v-show="!loading"
+    />
   </div>
 </template>
 
@@ -94,19 +113,32 @@ export default {
       loading: false,
       error: null,
       showTable: true,
+      currentPage: 1,
+      itemsPerPage: 10,
     };
   },
 
-  mounted() {
-    // this.getProjectStatus();
-  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.projects.length / this.itemsPerPage);
+    },
 
-  // watch: {
-  //   valueSingle(newValue) {
-  //     // this.getProjectStatus(newValue);
-  //     console.log(newValue);
-  //   },
-  // },
+    displayedProjects() {
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      return this.projects.slice(startIndex, endIndex);
+    },
+
+    paginatedProjects() {
+      const paginated = [];
+      for (let i = 0; i < this.totalPages; i++) {
+        const startIndex = i * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        paginated.push(this.projects.slice(startIndex, endIndex));
+      }
+      return paginated;
+    },
+  },
 
   methods: {
     getProjectStatus(selectedOption) {
@@ -126,7 +158,6 @@ export default {
         enddate: "2024-01-18T05:36:44.222Z",
       })
         .then((response) => {
-          // Set a timeout to update projects after 3 seconds
           setTimeout(() => {
             this.projects = response.data.sort((a, b) => {
               const aId = a.pjId.split("-");
@@ -138,16 +169,14 @@ export default {
               return bComparable - aComparable;
             });
 
-            // Hide loading indicator immediately after updating projects
             this.loading = false;
             this.showTable = true;
-          }, 3000);
+          }, 1500);
         })
         .catch((error) => {
           this.loading = false;
-          this.error = "Error fetching data. Please try again.";
+          this.error = "Error fetching data. Please try again.....";
           console.error(error);
-          console.log(error);
         });
     },
 

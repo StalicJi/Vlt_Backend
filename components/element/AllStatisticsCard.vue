@@ -48,10 +48,7 @@ export default {
 
   methods: {
     goAllInfoPage() {
-      console.log("click");
-      this.$router.push({
-        path: "/projectstatus",
-      });
+      this.$emit("card-click", this.label);
     },
   },
 };

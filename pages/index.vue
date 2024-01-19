@@ -29,6 +29,7 @@
             label="業務中"
             iconName="library_books"
             :value="parseInt(ProjecBusinessNumber)"
+            @card-click="handleCardClick"
           />
           <AllStaCard
             bgColorClass="bg-[#87AD75]"
@@ -36,6 +37,7 @@
             label="執行中"
             iconName="code"
             :value="parseInt(ProjectExecutingNumber)"
+            @card-click="handleCardClick"
           />
           <AllStaCard
             bgColorClass="bg-[#047AE7]"
@@ -43,6 +45,7 @@
             label="保固中"
             iconName="construction"
             :value="parseInt(ProjectWarrantygNumber)"
+            @card-click="handleCardClick"
           />
           <AllStaCard
             bgColorClass="bg-[#e3a74d]"
@@ -50,6 +53,7 @@
             label="結案"
             iconName="assignment_turned_in"
             :value="parseInt(ProjectClosethecaseNumber)"
+            @card-click="handleCardClick"
           />
         </div>
 
@@ -170,6 +174,18 @@ export default {
 
       myChart.setOption(option);
       option && myChart.setOption(option);
+    },
+
+    handleCardClick(label) {
+      this.goAllInfoPage(label);
+    },
+
+    goAllInfoPage(label) {
+      console.log("Navigating to project status page with label:", label);
+
+      this.$router.push({
+        path: "/projectstatus",
+      });
     },
   },
 };
