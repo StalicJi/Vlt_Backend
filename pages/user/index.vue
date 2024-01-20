@@ -2,6 +2,15 @@
   <div class="p-7">
     <div class="flex-btw">
       <PageTitle icon-name="groups" page-title="員工名單" />
+      <VaSwitch
+        v-model="value"
+        true-inner-label="在職"
+        false-inner-label="離職"
+        color="success"
+        size="small"
+        class="p-2"
+        v-if="!loading"
+      />
     </div>
     <div class="w-full mt-8">
       <table class="w-full">
@@ -15,9 +24,15 @@
             <th class="py-4"></th>
           </tr>
         </thead>
+        <VaInnerLoading
+          loading
+          class="relative top-12 left-[135%]"
+          color="#6b7280"
+          v-if="loading"
+        />
         <tbody class="w-full">
           <tr
-            v-for="user in users"
+            v-for="user in displayedProjects"
             :key="user.staff_id"
             class="text-center border-b-2 hover:bg-gray-200"
           >
@@ -39,6 +54,16 @@
         </tbody>
       </table>
     </div>
+    <VaPagination
+      v-model="currentPage"
+      :pages="totalPages"
+      :visible-pages="3"
+      buttons-preset="secondary"
+      color="#6b7280"
+      active-page-color="#126992"
+      class="justify-center sm:justify-start mt-4"
+      v-show="!loading"
+    />
   </div>
 </template>
 
@@ -54,18 +79,50 @@ export default {
 
   data() {
     return {
-      users: [
-        // { //   staff_id: 1120401,
-        //   name: "Ashley Mcdaniel",
-        //   dep_name: "資訊部 ",
-        //   jobname: "工程師",
-        // },
-      ],
+      users: [],
+      loading: true,
+      currentPage: 1,
+      itemsPerPage: 10,
+      value: true,
     };
   },
 
   mounted() {
     this.getAllProjectData();
+  },
+
+  computed: {
+    totalPages() {
+      return Math.ceil(this.filteredUsers.length / this.itemsPerPage);
+    },
+
+    // displayedProjects() {
+    //   const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    //   const endIndex = startIndex + this.itemsPerPage;
+    //   return this.users.slice(startIndex, endIndex);
+    // },
+
+    // paginatedProjects() {
+    //   const paginated = [];
+    //   for (let i = 0; i < this.totalPages; i++) {
+    //     const startIndex = i * this.itemsPerPage;
+    //     const endIndex = startIndex + this.itemsPerPage;
+    //     paginated.push(this.users.slice(startIndex, endIndex));
+    //   }
+    //   return paginated;
+    // },
+    filteredUsers() {
+      return this.users.filter((user) => {
+        console.log(user);
+        return this.value ? user.staff_duty === "1" : user.staff_duty === "0";
+      });
+    },
+
+    displayedProjects() {
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      return this.filteredUsers.slice(startIndex, endIndex);
+    },
   },
 
   methods: {
@@ -74,9 +131,12 @@ export default {
         Staffid: "All",
       })
         .then((response) => {
-          this.users = response.data.sort((a, b) => {
-            return b.staff_duty - a.staff_duty;
-          });
+          setTimeout(() => {
+            this.users = response.data.sort((a, b) => {
+              return b.staff_duty - a.staff_duty;
+            });
+            this.loading = false;
+          }, 1000);
         })
         .catch((error) => {
           console.error("Error fetching user data:", error);

@@ -14,7 +14,7 @@
         placeholder="請選擇結束日"
         v-model="endtdate"
       />
-      <Button buttonText="查詢" @click="findChart" />
+      <Button buttonText="查詢" @click="findChart" class="w-20" />
     </div>
 
     <div class="flex gap-4">

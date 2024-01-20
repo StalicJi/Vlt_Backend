@@ -188,6 +188,7 @@ export default {
     searchStatus() {
       this.projects = [];
       this.showTable = false;
+      this.currentPage = 1;
       this.getProjectStatus(this.valueSingle);
       this.$router.push({
         path: "/projectstatus",
