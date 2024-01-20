@@ -96,21 +96,6 @@ export default {
       return Math.ceil(this.filteredUsers.length / this.itemsPerPage);
     },
 
-    // displayedProjects() {
-    //   const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    //   const endIndex = startIndex + this.itemsPerPage;
-    //   return this.users.slice(startIndex, endIndex);
-    // },
-
-    // paginatedProjects() {
-    //   const paginated = [];
-    //   for (let i = 0; i < this.totalPages; i++) {
-    //     const startIndex = i * this.itemsPerPage;
-    //     const endIndex = startIndex + this.itemsPerPage;
-    //     paginated.push(this.users.slice(startIndex, endIndex));
-    //   }
-    //   return paginated;
-    // },
     filteredUsers() {
       return this.users.filter((user) => {
         console.log(user);
