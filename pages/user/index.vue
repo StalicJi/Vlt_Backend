@@ -98,7 +98,6 @@ export default {
 
     filteredUsers() {
       return this.users.filter((user) => {
-        console.log(user);
         return this.value ? user.staff_duty === "1" : user.staff_duty === "0";
       });
     },

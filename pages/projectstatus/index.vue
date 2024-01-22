@@ -4,7 +4,7 @@
       <PageTitle icon-name="search" page-title="專案狀態查詢" />
     </div>
 
-    <div class="flex justify-end gap-4 w-full">
+    <div class="flex justify-end gap-4 w-full mt-4">
       <div class="flex items-center gap-4">
         <label>專案狀態 : </label>
         <div class="w-28">
@@ -34,7 +34,7 @@
             background="#fff"
             color="info"
             placeholder="請選擇日期"
-            v-model="endtdate"
+            v-model="enddate"
           />
         </div>
         <Button buttonText="查詢" @click="searchStatus" />
@@ -106,7 +106,13 @@ export default {
     Button,
   },
   data() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
     return {
+      startdate: new Date(year, 0, 1),
+      enddate: new Date(year, month, day),
       projects: [],
       options: ["業務中", "執行中", "保固中", "結案"],
       valueSingle: "業務中",
@@ -119,7 +125,13 @@ export default {
   },
 
   created() {
-    this.getProjectStatus(this.$route.query.status);
+    this.startdate = null;
+    this.enddate = new Date();
+    this.getProjectStatus(
+      this.$route.query.status,
+      this.startdate,
+      this.enddate
+    );
     this.valueSingle = this.$route.query.status;
   },
 
@@ -146,7 +158,7 @@ export default {
   },
 
   methods: {
-    getProjectStatus(selectedOption) {
+    getProjectStatus(selectedOption, start, end) {
       this.loading = true;
       const typeMapping = {
         業務中: "S",
@@ -159,8 +171,8 @@ export default {
       API.post("api/ProjectAnalysis/GetDetailProjectData", {
         id: "All",
         type: selectedType,
-        startdate: null,
-        enddate: "2024-01-18T05:36:44.222Z",
+        startdate: start,
+        enddate: end,
       })
         .then((response) => {
           setTimeout(() => {
@@ -186,14 +198,21 @@ export default {
     },
 
     searchStatus() {
-      this.projects = [];
-      this.showTable = false;
-      this.currentPage = 1;
-      this.getProjectStatus(this.valueSingle);
-      this.$router.push({
-        path: "/projectstatus",
-        query: { status: this.valueSingle },
-      });
+      const date = new Date();
+      if (this.enddate < this.startdate) {
+        alert("結束時間應晚於起始時間");
+      } else if (this.endtdate >= date) {
+        alert("結束時間應早於當前時間");
+      } else {
+        this.projects = [];
+        this.showTable = false;
+        this.currentPage = 1;
+        this.getProjectStatus(this.valueSingle, this.startdate, this.enddate);
+        this.$router.push({
+          path: "/projectstatus",
+          query: { status: this.valueSingle },
+        });
+      }
     },
   },
 };
