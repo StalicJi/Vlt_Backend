@@ -175,7 +175,7 @@ export default {
 
       const selectedType = typeMapping[selectedOption];
       API.post("api/ProjectAnalysis/GetDetailProjectData", {
-        id: "All",
+        id: this.$route.params.id,
         type: selectedType,
         startdate: startDate,
         enddate: endDate,
@@ -215,7 +215,7 @@ export default {
         this.currentPage = 1;
         this.getProjectStatus(this.valueSingle, this.startdate, this.enddate);
         this.$router.push({
-          path: "/projectstatus",
+          path: `/user/${this.$route.params.id}/projectstatus`,
           query: { status: this.valueSingle },
         });
       }
