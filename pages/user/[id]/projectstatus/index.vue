@@ -1,7 +1,7 @@
 <template>
   <div class="p-7">
     <div>
-      <PageTitle icon-name="search" page-title="專案狀態查詢" />
+      <PageTitle icon-name="search" :page-title="titleUserName" />
     </div>
 
     <div class="flex justify-end gap-4 w-full mt-4">
@@ -73,7 +73,11 @@
             <td class="py-2">{{ project.pjType }}</td>
             <td class="py-2">{{ project.pjManager }}</td>
             <td class="flex-center py-2">
-              <Button buttonText="匯出" class="bg-green-700" />
+              <Button
+                buttonText="匯出"
+                class="bg-green-700"
+                @click="exportExcel"
+              />
             </td>
           </tr>
         </tbody>
@@ -127,10 +131,12 @@ export default {
       showTable: true,
       currentPage: 1,
       itemsPerPage: 10,
+      titleUserName: "專案狀態查詢 : ",
     };
   },
 
   created() {
+    this.getStaffInfo();
     this.startdate = null;
     this.enddate = new Date();
     this.getProjectStatus(
@@ -202,6 +208,30 @@ export default {
           console.error(error);
         });
     },
+
+    getStaffInfo() {
+      API.post("/api/ProjectAnalysis/PostStaffData", {
+        Staffid: this.$route.params.id,
+      })
+        .then((response) => {
+          this.titleUserName = String(
+            `專案狀態查詢 : ${response.data[0].name}`
+          );
+        })
+        .catch((error) => console.error(error));
+    },
+
+    // exportExcel() {
+    //   API.post("/api/ProjectAnalysis/DownloadAllProjectDataExcel", {
+    //     id: "2023-14",
+    //     staffid: "All",
+    //   })
+    //     .then((response) => {
+    //       console.log(response);
+    //       console.log("click");
+    //     })
+    //     .catch((error) => console.error(error));
+    // },
 
     searchStatus() {
       const date = new Date();

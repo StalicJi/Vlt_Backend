@@ -73,7 +73,11 @@
             <td class="py-2">{{ project.pjType }}</td>
             <td class="py-2">{{ project.pjManager }}</td>
             <td class="flex-center py-2">
-              <Button buttonText="匯出" class="bg-green-700" />
+              <Button
+                buttonText="匯出"
+                class="bg-green-700"
+                @click="exportExcel(project.pjId, project.pjName)"
+              />
             </td>
           </tr>
         </tbody>
@@ -201,6 +205,28 @@ export default {
           this.error = "Error fetching data. Please try again.....";
           console.error(error);
         });
+    },
+    exportExcel(projectId, projectName) {
+      API.post("/api/ProjectAnalysis/DownloadAllProjectDataExcel", {
+        id: projectId, // Use the project ID for downloading specific project's data
+        staffid: "All",
+      })
+        .then((response) => {
+          const blob = new Blob([response.data], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+
+          const url = window.URL.createObjectURL(blob);
+          console.log(url);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `${projectName}(${projectId}).xlsx`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => console.error(error));
     },
 
     searchStatus() {

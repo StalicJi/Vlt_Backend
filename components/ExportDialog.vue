@@ -13,7 +13,7 @@
         background="#fff"
         color="info"
         placeholder="請選擇結束日"
-        v-model="endtdate"
+        v-model="enddate"
       />
     </div>
     <div class="flex gap-4 justify-end">
@@ -28,6 +28,12 @@ import Button from "~/components/element/Button.vue";
 export default {
   components: {
     Button,
+  },
+  data() {
+    return {
+      startdate: null,
+      enddate: null,
+    };
   },
 
   methods: {
