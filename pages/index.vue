@@ -133,6 +133,7 @@ export default {
           axisPointer: {
             type: "line",
           },
+          formatter: "{c} 件",
         },
         xAxis: {
           type: "category",
@@ -181,8 +182,6 @@ export default {
     },
 
     goAllInfoPage(label) {
-      console.log(label);
-
       this.$router.push({
         path: "/projectstatus",
         query: { status: label },

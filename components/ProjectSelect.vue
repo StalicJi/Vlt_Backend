@@ -79,7 +79,8 @@ export default {
             options.push(`${data.pj_name} (${data.pj_id})`);
           });
           this.options = options;
-          this.valueSingle = "請選擇專案...";
+          this.valueSingle = options[0];
+          // this.valueSingle = "請選擇....";
         })
         .catch((error) =>
           console.error("Error fetching all project data:", error)

@@ -206,18 +206,18 @@ export default {
           console.error(error);
         });
     },
+
     exportExcel(projectId, projectName) {
       API.post("/api/ProjectAnalysis/DownloadAllProjectDataExcel", {
-        id: projectId, // Use the project ID for downloading specific project's data
+        id: projectId,
         staffid: "All",
       })
         .then((response) => {
           const blob = new Blob([response.data], {
             type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
           });
-
+          console.log(blob);
           const url = window.URL.createObjectURL(blob);
-          console.log(url);
           const a = document.createElement("a");
           a.href = url;
           a.download = `${projectName}(${projectId}).xlsx`;

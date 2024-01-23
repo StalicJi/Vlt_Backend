@@ -54,7 +54,7 @@
             background="#fff"
             color="info"
             placeholder="請選擇結束日"
-            v-model="endtdate"
+            v-model="enddate"
           />
           <Button buttonText="查詢" @click="findChart" />
         </div>
@@ -120,7 +120,13 @@ export default {
   },
 
   data() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
     return {
+      startdate: new Date(year, 0, 1),
+      enddate: new Date(year, month, day),
       hiddenAreaChart: false,
       hiddenWorkPieChart: true,
       hiddenEmploPieChart: true,
@@ -130,21 +136,25 @@ export default {
       totalHours: "",
       customer: "",
       projectTitle: "專案名稱:",
+      projectSTime: "",
+      projectETime: "",
     };
   },
 
   mounted() {
     this.getProjectInfo(this.$route.params.id);
     this.getProjectTitle();
-    this.initAreaChart();
+    this.getProjectSTime();
+    this.startdate = null;
+    this.enddate = null;
     this.hiddenAreaChart = !this.hiddenAreaChart;
     this.hiddenWorkPieChart = !this.hiddenWorkPieChart;
     this.$nextTick(() => {
-      this.initWorkPieChar();
+      this.initWorkPieChart();
       this.hiddenWorkPieChart = !this.hiddenWorkPieChart;
       this.hiddenEmploPieChart = !this.hiddenEmploPieChart;
       this.$nextTick(() => {
-        this.initEmploPieChar();
+        this.initEmploPieChart();
         this.hiddenEmploPieChart = !this.hiddenEmploPieChart;
         this.hiddenAreaChart = !this.hiddenAreaChart;
       });
@@ -152,6 +162,29 @@ export default {
   },
 
   methods: {
+    findChart() {
+      const addOneDay = (date) => {
+        const nextDate = new Date(date);
+        nextDate.setDate(nextDate.getDate() + 1);
+        return nextDate.toISOString().split(".")[0] + "Z";
+      };
+
+      const startISOString = addOneDay(this.startdate);
+      const endISOString = addOneDay(this.enddate);
+
+      this.createAreaChart(this.$route.params.id, startISOString, endISOString);
+      this.createWorkPieChart(
+        this.$route.params.id,
+        startISOString,
+        endISOString
+      );
+      this.createEmploPieChart(
+        this.$route.params.id,
+        startISOString,
+        endISOString
+      );
+    },
+
     getProjectInfo(project_id) {
       API.post("api/ProjectAnalysis/GetindividualProjectInformation", {
         id: project_id,
@@ -197,7 +230,93 @@ export default {
         .catch((error) => console.error(error));
     },
 
-    initAreaChart() {
+    getProjectSTime() {
+      API.post("api/ProjectAnalysis/GetPjStartTime", {
+        id: this.$route.params.id,
+      })
+        .then((response) => {
+          this.projectSTime = response.data.pjStartDate;
+          this.projectETime = response.data.pjEndDate;
+          this.createAreaChart(
+            this.$route.params.id,
+            this.projectSTime,
+            this.projectETime
+          );
+          this.createWorkPieChart(
+            this.$route.params.id,
+            this.projectSTime,
+            this.projectETime
+          );
+          this.createEmploPieChart(
+            this.$route.params.id,
+            this.projectSTime,
+            this.projectETime
+          );
+        })
+        .catch((error) => console.error(error));
+    },
+
+    createAreaChart(projectId, startDate, endDate) {
+      API.post("api/ProjectAnalysis/GetareaChart", {
+        id: projectId,
+        staffid: "All",
+        startdate: startDate,
+        enddate: endDate,
+      })
+        .then((response) => {
+          const dates = response.data.map((workDate) => workDate.date);
+          const hours = response.data.map((workHour) => workHour.hour);
+          this.initAreaChart(dates, hours);
+        })
+        .catch((error) => console.error(error));
+    },
+
+    createWorkPieChart(projectId, startDate, endDate) {
+      const currentDate = new Date();
+      API.post("api/ProjectAnalysis/GettypeChart", {
+        id: projectId,
+        staffid: "All",
+        startdate: startDate,
+        enddate: endDate,
+      })
+        .then((response) => {
+          // console.log(response.data);
+          const workTypeName = response.data.map((name) => name.typeName);
+          const costHours = response.data.map((hour) => +hour.costHours);
+
+          const combinedData = workTypeName.map((name, index) => ({
+            value: costHours[index],
+            name: name,
+          }));
+
+          this.initWorkPieChart(workTypeName, costHours, combinedData);
+        })
+        .catch((error) => console.error(error));
+    },
+
+    createEmploPieChart(projectId, startDate, endDate) {
+      const currentDate = new Date();
+      API.post("api/ProjectAnalysis/GetpersonHourChart", {
+        id: projectId,
+        startdate: startDate,
+        enddate: endDate,
+      })
+        .then((response) => {
+          const personName = response.data.map((name) => name.personName);
+          const costHours = response.data.map((hour) => +hour.costHours);
+
+          const combinedData = personName.map((name, index) => ({
+            value: costHours[index],
+            name: name,
+          }));
+
+          this.initEmploPieChart(personName, costHours, combinedData);
+        })
+        .catch((error) => console.error(error));
+    },
+
+    // 圖表初始
+    initAreaChart(dateData, hoursData) {
       const chartDom = document.getElementById("areaChart");
       const myChart = echarts.init(chartDom);
 
@@ -209,17 +328,22 @@ export default {
           },
           left: "center",
         },
+        tooltip: {
+          trigger: "item",
+          formatter: "{b}: 累積共 {c}小時",
+        },
         xAxis: {
           type: "category",
           boundaryGap: false,
-          data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          data: dateData,
         },
         yAxis: {
           type: "value",
+          name: "小時",
         },
         series: [
           {
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            data: hoursData,
             type: "line",
             areaStyle: {},
           },
@@ -229,7 +353,7 @@ export default {
       option && myChart.setOption(option);
     },
 
-    initWorkPieChar() {
+    initWorkPieChart(typeName, housrs, combinedData) {
       const chartDom = document.getElementById("workPieChar");
       const myChart = echarts.init(chartDom);
 
@@ -243,12 +367,12 @@ export default {
         },
         tooltip: {
           trigger: "item",
-          formatter: "{a} <br/>{b} : {c} ({d}%)",
+          formatter: "{b}: 共 {c}小時, 佔 {d}%",
         },
         legend: {
           bottom: 10,
           left: "center",
-          data: ["CityA", "CityB", "CityD", "CityC", "CityE"],
+          data: typeName,
         },
         series: [
           {
@@ -256,16 +380,7 @@ export default {
             radius: "65%",
             center: ["50%", "50%"],
             selectedMode: "single",
-            data: [
-              {
-                value: 1548,
-                name: "CityE",
-              },
-              { value: 735, name: "CityC" },
-              { value: 510, name: "CityD" },
-              { value: 434, name: "CityB" },
-              { value: 335, name: "CityA" },
-            ],
+            data: combinedData,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
@@ -279,7 +394,7 @@ export default {
       option && myChart.setOption(option);
     },
 
-    initEmploPieChar() {
+    initEmploPieChart(personName, hours, combinedData) {
       const chartDom = document.getElementById("emploPieChart");
       const myChart = echarts.init(chartDom);
 
@@ -293,12 +408,12 @@ export default {
         },
         tooltip: {
           trigger: "item",
-          formatter: "{a} <br/>{b} : {c} ({d}%)",
+          formatter: "{c} 小時",
         },
         legend: {
           bottom: 10,
           left: "center",
-          data: ["CityA", "CityB", "CityD", "CityC", "CityE"],
+          data: personName,
         },
         series: [
           {
@@ -306,16 +421,7 @@ export default {
             radius: "65%",
             center: ["50%", "50%"],
             selectedMode: "single",
-            data: [
-              {
-                value: 1548,
-                name: "CityE",
-              },
-              { value: 735, name: "CityC" },
-              { value: 510, name: "CityD" },
-              { value: 434, name: "CityB" },
-              { value: 335, name: "CityA" },
-            ],
+            data: combinedData,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
