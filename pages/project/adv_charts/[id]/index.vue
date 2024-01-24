@@ -157,7 +157,8 @@ export default {
       const addOneDay = (date) => {
         const nextDate = new Date(date);
         nextDate.setDate(nextDate.getDate() + 1);
-        return nextDate.toISOString().split(".")[0] + "Z";
+        nextDate.setHours(nextDate.getHours() - 16);
+        return nextDate.toISOString().split(".")[0];
       };
 
       const startISOString = addOneDay(this.startdate);
@@ -165,13 +166,13 @@ export default {
 
       if (startISOString < this.projectSTime) {
         const projectStartDate = this.projectSTime.split("T")[0];
-        alert(`起始時間應晚於或等於 ${projectStartDate}`);
+        alert(`起始時間應早晚於或等於 ${projectStartDate}`);
         return;
       }
 
       if (endISOString > this.projectETime) {
         const projectEndDate = this.projectETime.split("T")[0];
-        alert(`起始時間應早於或等於 ${projectEndDate}`);
+        alert(`結束時間應早於或等於 ${projectEndDate}`);
         return;
       }
 
