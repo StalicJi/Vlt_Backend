@@ -1,7 +1,7 @@
 <template>
   <div class="p-7 flex flex-col">
     <div class="flex-btw">
-      <PageTitle icon-name="search" page-title="個人專案統計數據" />
+      <PageTitle icon-name="search" :page-title="projectTitle" />
       <div class="default-btn bg-green-700" @click="openDialog">
         <VaIcon name="ios_share" size="16px" color="#fff" />
         <p class="text-white ml-1 text-sm">EXCEL</p>
@@ -11,34 +11,25 @@
       <div class="grid grid-flow-col grid-cols-6 mt-8 gap-4 row-span-1">
         <ProjectInfoCard
           className="col-span-1"
-          bgColorClass="bg-gray-500"
           title="負責人"
-          cnt="邱育聖"
+          :cnt="projectManager"
         />
         <ProjectInfoCard
           className="col-span-1"
-          bgColorClass="bg-gray-500"
           title="型態"
-          cnt="研發"
+          :cnt="projectType"
         />
         <ProjectInfoCard
           className="col-span-1"
-          bgColorClass="bg-gray-500"
           title="狀態"
-          cnt="進行中"
+          :cnt="projectStatus"
         />
         <ProjectInfoCard
           className="col-span-1"
-          bgColorClass="bg-gray-500"
           title="總花費時間 (小時)"
-          cnt="125"
+          :cnt="totalHours"
         />
-        <ProjectInfoCard
-          className="col-span-2"
-          bgColorClass="bg-gray-500"
-          title="專案名稱"
-          :cnt="$route.params.project_id"
-        />
+        <ProjectInfoCard className="col-span-2" title="客戶" :cnt="customer" />
       </div>
 
       <div class="my-4 border-t border-gray-300 flex-1 flex flex-col">
@@ -54,7 +45,7 @@
             background="#fff"
             color="info"
             placeholder="請選擇結束日"
-            v-model="endtdate"
+            v-model="enddate"
           />
           <Button buttonText="查詢" @click="findChart" />
         </div>
@@ -92,6 +83,7 @@
 </template>
 
 <script>
+import API from "~/src/api";
 import PageTitle from "~/components/element/PageTitle.vue";
 import ProjectInfoCard from "~/components/element/ProjectInfoCard.vue";
 import Button from "~/components/element/Button.vue";
@@ -105,44 +97,220 @@ export default {
   },
 
   data() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
     return {
+      startdate: new Date(year, 0, 1),
+      enddate: new Date(year, month, day),
       showPieChart: false,
+      projectManager: "",
+      projectStatus: "",
+      projectType: "",
+      totalHours: "",
+      customer: "",
+      projectTitle: "個人專案查詢 : ",
+      userId: "",
     };
   },
+  // setup() {
+  //   const router = useRoute();
+  //   console.log(router);
+  // },
 
   mounted() {
+    this.getStaffId();
+    this.getProjectSTime(this.userId);
+    this.getProjectInfo(this.$route.params.id);
+    this.getProjectTitle();
+    this.startdate = null;
+    this.enddate = null;
     this.initAreaChart();
     this.showPieChart = !this.showPieChart;
     this.$nextTick(() => {
-      this.initPieChart();
+      this.initWorkPieChart();
       this.showPieChart = !this.showPieChart;
     });
   },
 
   methods: {
-    initAreaChart() {
+    findChart() {
+      const addOneDay = (date) => {
+        const nextDate = new Date(date);
+        nextDate.setDate(nextDate.getDate() + 1);
+        return nextDate.toISOString().split(".")[0] + "Z";
+      };
+
+      const startISOString = addOneDay(this.startdate);
+      const endISOString = addOneDay(this.enddate);
+
+      if (startISOString < this.projectSTime) {
+        const projectStartDate = this.projectSTime.split("T")[0];
+        alert(`起始時間應晚於或等於 ${projectStartDate}`);
+        return;
+      }
+
+      if (endISOString > this.projectETime) {
+        const projectEndDate = this.projectETime.split("T")[0];
+        alert(`起始時間應早於或等於 ${projectEndDate}`);
+        return;
+      }
+
+      this.createAreaChart(
+        this.$route.params.id,
+        this.userId,
+        startISOString,
+        endISOString
+      );
+      this.createWorkPieChart(
+        this.$route.params.id,
+        this.userId,
+        startISOString,
+        endISOString
+      );
+    },
+
+    getStaffId() {
+      const router = useRoute();
+      const parts = router.fullPath.split("/");
+      const userIdIndex = parts.indexOf("user") + 1;
+      const userId = userIdIndex >= 0 ? parts[userIdIndex] : null;
+      this.userId = userId;
+    },
+
+    getProjectInfo(project_id) {
+      API.post("api/ProjectAnalysis/GetindividualProjectInformation", {
+        id: project_id,
+      })
+        .then((response) => {
+          if (response.status === 204) {
+            this.projectManager = "無資料";
+            this.projectStatus = "無資料";
+            this.projectType = "無資料";
+            this.totalHours = "無資料";
+            this.customer = "無資料";
+          } else {
+            this.projectManager = response.data.pm;
+            this.projectStatus = response.data.projectStatus;
+            this.projectType = response.data.projectType;
+            this.totalHours = response.data.totalHours;
+            this.customer = response.data.customer;
+          }
+        })
+        .catch((error) => {
+          this.projectManager = "-";
+          this.projectStatus = "-";
+          this.projectType = "-";
+          this.totalHours = "-";
+          this.customer = "-";
+          console.error(error);
+        });
+    },
+
+    getProjectTitle() {
+      API.post("api/ProjectAnalysis/ProjectSelector", {
+        id: "All",
+      })
+        .then((response) => {
+          const projectData = response.data;
+          projectData.forEach((data) => {
+            if (data.pj_id === this.$route.params.id) {
+              this.projectTitle = String(`個人專案查詢：${data.pj_name}`);
+            }
+          });
+        })
+        .catch((error) => console.error(error));
+    },
+
+    getProjectSTime(userId) {
+      API.post("api/ProjectAnalysis/GetPjStartTime", {
+        id: this.$route.params.id,
+      })
+        .then((response) => {
+          this.projectSTime = response.data.pjStartDate;
+          this.projectETime = response.data.pjEndDate;
+          this.createAreaChart(
+            this.$route.params.id,
+            userId,
+            this.projectSTime,
+            this.projectETime
+          );
+          this.createWorkPieChart(
+            this.$route.params.id,
+            userId,
+            this.projectSTime,
+            this.projectETime
+          );
+        })
+        .catch((error) => console.error(error));
+    },
+
+    createAreaChart(projectId, userId, startDate, endDate) {
+      API.post("api/ProjectAnalysis/GetareaChart", {
+        id: projectId,
+        staffid: userId,
+        startdate: startDate,
+        enddate: endDate,
+      })
+        .then((response) => {
+          const dates = response.data.map((workDate) => workDate.date);
+          const hours = response.data.map((workHour) => workHour.hour);
+
+          this.initAreaChart(dates, hours);
+        })
+        .catch((error) => console.error(error));
+    },
+
+    createWorkPieChart(projectId, userId, startDate, endDate) {
+      API.post("api/ProjectAnalysis/GettypeChart", {
+        id: projectId,
+        staffid: userId,
+        startdate: startDate,
+        enddate: endDate,
+      })
+        .then((response) => {
+          const workTypeName = response.data.map((name) => name.typeName);
+          const costHours = response.data.map((hour) => +hour.costHours);
+
+          const combinedData = workTypeName.map((name, index) => ({
+            value: costHours[index],
+            name: name,
+          }));
+
+          this.initWorkPieChart(workTypeName, combinedData);
+        })
+        .catch((error) => console.error(error));
+    },
+
+    initAreaChart(dateData, hoursData) {
       const chartDom = document.getElementById("areaChart");
       const myChart = echarts.init(chartDom);
 
       const option = {
         title: {
-          text: "面積圖",
+          text: "個人專案累加時間面積圖",
           textStyle: {
             fontSize: 20,
           },
           left: "center",
         },
+        tooltip: {
+          trigger: "item",
+          formatter: "{b}: 累積共 {c}小時",
+        },
         xAxis: {
           type: "category",
           boundaryGap: false,
-          data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          data: dateData,
         },
         yAxis: {
           type: "value",
+          name: "小時",
         },
         series: [
           {
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            data: hoursData,
             type: "line",
             areaStyle: {},
           },
@@ -152,13 +320,13 @@ export default {
       option && myChart.setOption(option);
     },
 
-    initPieChart() {
+    initWorkPieChart(typeName, combinedData) {
       const chartDom = document.getElementById("pieChart");
       const myChart = echarts.init(chartDom);
 
       const option = {
         title: {
-          text: "圓餅圖",
+          text: "工作型態統計圓餅圖",
           textStyle: {
             fontSize: 20,
           },
@@ -166,12 +334,12 @@ export default {
         },
         tooltip: {
           trigger: "item",
-          formatter: "{a} <br/>{b} : {c} ({d}%)",
+          formatter: "{b}: 共 {c}小時, 佔 {d}%",
         },
         legend: {
           bottom: 10,
           left: "center",
-          data: ["CityA", "CityB", "CityD", "CityC", "CityE"],
+          data: typeName,
         },
         series: [
           {
@@ -179,16 +347,7 @@ export default {
             radius: "65%",
             center: ["50%", "50%"],
             selectedMode: "single",
-            data: [
-              {
-                value: 1548,
-                name: "CityE",
-              },
-              { value: 735, name: "CityC" },
-              { value: 510, name: "CityD" },
-              { value: 434, name: "CityB" },
-              { value: 335, name: "CityA" },
-            ],
+            data: combinedData,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,

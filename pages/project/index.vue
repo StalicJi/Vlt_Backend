@@ -7,34 +7,21 @@
     <div class="grid grid-flow-col grid-cols-6 mt-8 gap-4">
       <ProjectInfoCard
         className="col-span-1"
-        bgColorClass="bg-gray-500"
         title="負責人"
         :cnt="projectManager"
       />
+      <ProjectInfoCard className="col-span-1" title="型態" :cnt="projectType" />
       <ProjectInfoCard
         className="col-span-1"
-        bgColorClass="bg-gray-500"
-        title="型態"
-        :cnt="projectType"
-      />
-      <ProjectInfoCard
-        className="col-span-1"
-        bgColorClass="bg-gray-500"
         title="狀態"
         :cnt="projectStatus"
       />
       <ProjectInfoCard
         className="col-span-1"
-        bgColorClass="bg-gray-500"
         title="總花費時間 (小時)"
         :cnt="totalHours"
       />
-      <ProjectInfoCard
-        className="col-span-2"
-        bgColorClass="bg-gray-500"
-        title="客戶"
-        :cnt="customer"
-      />
+      <ProjectInfoCard className="col-span-2" title="客戶" :cnt="customer" />
     </div>
     <div class="w-full mt-8" v-if="users.length > 0">
       <table class="w-full">

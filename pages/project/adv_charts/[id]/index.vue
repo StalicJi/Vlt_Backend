@@ -11,34 +11,25 @@
       <div class="grid grid-flow-col grid-cols-6 mt-8 gap-4 row-span-1">
         <ProjectInfoCard
           className="col-span-1"
-          bgColorClass="bg-gray-500"
           title="負責人"
           :cnt="projectManager"
         />
         <ProjectInfoCard
           className="col-span-1"
-          bgColorClass="bg-gray-500"
           title="型態"
           :cnt="projectType"
         />
         <ProjectInfoCard
           className="col-span-1"
-          bgColorClass="bg-gray-500"
           title="狀態"
           :cnt="projectStatus"
         />
         <ProjectInfoCard
           className="col-span-1"
-          bgColorClass="bg-gray-500"
           title="總花費時間 (小時)"
           :cnt="totalHours"
         />
-        <ProjectInfoCard
-          className="col-span-2"
-          bgColorClass="bg-gray-500"
-          title="客戶"
-          :cnt="customer"
-        />
+        <ProjectInfoCard className="col-span-2" title="客戶" :cnt="customer" />
       </div>
 
       <div class="my-4 border-t border-gray-300 flex-1 flex flex-col">
@@ -172,6 +163,18 @@ export default {
       const startISOString = addOneDay(this.startdate);
       const endISOString = addOneDay(this.enddate);
 
+      if (startISOString < this.projectSTime) {
+        const projectStartDate = this.projectSTime.split("T")[0];
+        alert(`起始時間應晚於或等於 ${projectStartDate}`);
+        return;
+      }
+
+      if (endISOString > this.projectETime) {
+        const projectEndDate = this.projectETime.split("T")[0];
+        alert(`起始時間應早於或等於 ${projectEndDate}`);
+        return;
+      }
+
       this.createAreaChart(this.$route.params.id, startISOString, endISOString);
       this.createWorkPieChart(
         this.$route.params.id,
@@ -190,7 +193,7 @@ export default {
         id: project_id,
       })
         .then((response) => {
-          console.log(response);
+          // console.log(response);
           if (response.status === 204) {
             this.projectManager = "無資料";
             this.projectStatus = "無資料";
@@ -266,13 +269,13 @@ export default {
         .then((response) => {
           const dates = response.data.map((workDate) => workDate.date);
           const hours = response.data.map((workHour) => workHour.hour);
+
           this.initAreaChart(dates, hours);
         })
         .catch((error) => console.error(error));
     },
 
     createWorkPieChart(projectId, startDate, endDate) {
-      const currentDate = new Date();
       API.post("api/ProjectAnalysis/GettypeChart", {
         id: projectId,
         staffid: "All",
@@ -280,7 +283,6 @@ export default {
         enddate: endDate,
       })
         .then((response) => {
-          // console.log(response.data);
           const workTypeName = response.data.map((name) => name.typeName);
           const costHours = response.data.map((hour) => +hour.costHours);
 
@@ -289,13 +291,12 @@ export default {
             name: name,
           }));
 
-          this.initWorkPieChart(workTypeName, costHours, combinedData);
+          this.initWorkPieChart(workTypeName, combinedData);
         })
         .catch((error) => console.error(error));
     },
 
     createEmploPieChart(projectId, startDate, endDate) {
-      const currentDate = new Date();
       API.post("api/ProjectAnalysis/GetpersonHourChart", {
         id: projectId,
         startdate: startDate,
@@ -322,7 +323,7 @@ export default {
 
       const option = {
         title: {
-          text: "時間統計面積圖",
+          text: "專案累加時間面積圖",
           textStyle: {
             fontSize: 20,
           },
@@ -353,7 +354,7 @@ export default {
       option && myChart.setOption(option);
     },
 
-    initWorkPieChart(typeName, housrs, combinedData) {
+    initWorkPieChart(typeName, combinedData) {
       const chartDom = document.getElementById("workPieChar");
       const myChart = echarts.init(chartDom);
 

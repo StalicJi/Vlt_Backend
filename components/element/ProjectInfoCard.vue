@@ -1,8 +1,7 @@
 <template>
   <div class="h-28 w-full grid grid-flow-row grid-rows-6" :class="className">
     <p
-      class="text-white py-2 row-span-2 rounded-t-md px-3 flex-center"
-      :class="bgColorClass"
+      class="text-white py-2 row-span-2 rounded-t-md px-3 flex-center bg-gray-500"
     >
       {{ title }}
     </p>

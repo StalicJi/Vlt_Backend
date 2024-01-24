@@ -1,19 +1,21 @@
 <template>
   <div class="grid gap-4 grid-flow-row grid-rows-12 flex-1">
     <div class="flex gap-4 w-full row-span-1 h-12">
-      <VaDateInput
-        id="datetest"
-        background="#fff"
-        color="info"
-        placeholder="請選擇起始日"
-        v-model="startdate"
-      />
-      <VaDateInput
-        background="#fff"
-        color="info"
-        placeholder="請選擇結束日"
-        v-model="endtdate"
-      />
+      <div class="flex h-full w-full gap-4">
+        <VaDateInput
+          id="datetest"
+          background="#fff"
+          color="info"
+          placeholder="請選擇起始日"
+          v-model="startdate"
+        />
+        <VaDateInput
+          background="#fff"
+          color="info"
+          placeholder="請選擇結束日"
+          v-model="endtdate"
+        />
+      </div>
       <Button buttonText="查詢" @click="findChart" class="w-20" />
     </div>
 

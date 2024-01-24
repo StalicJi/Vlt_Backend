@@ -80,7 +80,6 @@ export default {
           });
           this.options = options;
           this.valueSingle = options[0];
-          // this.valueSingle = "請選擇....";
         })
         .catch((error) =>
           console.error("Error fetching all project data:", error)
@@ -98,11 +97,10 @@ export default {
 
             staffSelectData.forEach((data) => {
               options.push(`${data.pj_name} (${data.pj_id})`);
-              // console.log(options);
             });
 
             this.options = options;
-            this.valueSingle = "請選擇專案...";
+            this.valueSingle = options[0];
           } else {
             this.valueSingle = "此員工無專案紀錄...";
           }
@@ -113,15 +111,11 @@ export default {
     },
 
     projectSearch() {
-      if (this.$route.path === `/user/${this.id}`)
-        this.$router.push({
-          path: `/user/${this.id}/${project_id}`,
-        });
-
-      if (this.$route.path === "/project") {
-        // console.log(this.selectPj_id);
+      if (
+        this.$route.path === `/user/${this.id}/selectstaffpoject` ||
+        this.$route.path === "/project"
+      )
         this.$emit("selectId", this.selectPj_id);
-      }
     },
   },
 };
