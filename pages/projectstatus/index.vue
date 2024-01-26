@@ -206,27 +206,35 @@ export default {
           console.error(error);
         });
     },
-
     exportExcel(projectId, projectName) {
-      API.post("/api/ProjectAnalysis/DownloadAllProjectDataExcel", {
-        id: projectId,
-        staffid: "All",
-      })
-        .then((response) => {
-          const blob = new Blob([response.data], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          });
-          console.log(blob);
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `${projectName}(${projectId}).xlsx`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(url);
+      const userConfirmed = window.confirm(
+        `確定要匯出 (${projectName} - ${projectId}) 的Excel表單嗎?`
+      );
+      if (userConfirmed) {
+        const formData = new FormData();
+        formData.append("id", projectId);
+        formData.append("staffid", "All");
+
+        API.post("/api/ProjectAnalysis/DownloadAllProjectDataExcel", formData, {
+          responseType: "blob",
+          headers: {
+            "Content-Type": "application/vnd.ms-excel;charset=utf-8",
+          },
         })
-        .catch((error) => console.error(error));
+          .then((response) => {
+            const blob = new Blob([response.data], {
+              type: "application/vnd.ms-excel",
+            });
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${projectName}(${projectId}).xlsx`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+          })
+          .catch((error) => console.error(error));
+      }
     },
 
     searchStatus() {

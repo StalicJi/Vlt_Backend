@@ -147,9 +147,8 @@ export default {
     },
 
     goAdvCharts(pj_id) {
-      this.$router.push({
-        path: `/project/adv_charts/${pj_id}`,
-      });
+      //shoud reload next page to get params
+      window.location.href = `/project/adv_charts/${pj_id}`;
     },
   },
 };

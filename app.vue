@@ -14,6 +14,7 @@
           <ExportDialog
             class="absolute top-[20%] left-[35%] rounded-sm z-20"
             @closeDialog="closeDialog"
+            :project_id="projectId"
           />
         </div>
       </div>
@@ -34,9 +35,11 @@ useHead({
 
 // 控制 Dialog
 const isDisplayVisible = ref(false);
+const projectId = ref("");
 
-const openDialog = () => {
+const openDialog = (project_id: string) => {
   isDisplayVisible.value = true;
+  projectId.value = project_id;
 };
 const closeDialog = () => {
   isDisplayVisible.value = false;

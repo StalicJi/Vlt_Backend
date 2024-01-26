@@ -2,7 +2,11 @@
   <div class="p-7 flex flex-col">
     <div class="flex-btw">
       <PageTitle icon-name="search" :page-title="projectTitle" />
-      <div class="default-btn bg-green-700" @click="openDialog">
+      <div
+        class="default-btn bg-green-700"
+        :projectId="this.$route.params.id"
+        @click="openDialog"
+      >
         <VaIcon name="ios_share" size="16px" color="#fff" />
         <p class="text-white ml-1 text-sm">EXCEL</p>
       </div>
@@ -161,18 +165,18 @@ export default {
         return nextDate.toISOString().split(".")[0];
       };
 
-      const startISOString = addOneDay(this.startdate);
-      const endISOString = addOneDay(this.enddate);
+      const startISOString = addOneDay(this.startdate).split("T")[0];
+      const endISOString = addOneDay(this.enddate).split("T")[0];
+      const startTime = this.projectSTime.split("T")[0];
+      const endTime = this.projectETime.split("T")[0];
 
-      if (startISOString < this.projectSTime) {
-        const projectStartDate = this.projectSTime.split("T")[0];
-        alert(`起始時間應早晚於或等於 ${projectStartDate}`);
+      if (startISOString < startTime) {
+        alert(`起始時間應早晚於或等於 ${startTime}`);
         return;
       }
 
-      if (endISOString > this.projectETime) {
-        const projectEndDate = this.projectETime.split("T")[0];
-        alert(`結束時間應早於或等於 ${projectEndDate}`);
+      if (endISOString > endTime) {
+        alert(`結束時間應早於或等於 ${endTime}`);
         return;
       }
 
@@ -241,6 +245,9 @@ export default {
         .then((response) => {
           this.projectSTime = response.data.pjStartDate;
           this.projectETime = response.data.pjEndDate;
+          this.startdate = this.projectSTime.split("T")[0];
+          this.enddate = this.projectETime.split("T")[0];
+
           this.createAreaChart(
             this.$route.params.id,
             this.projectSTime,
@@ -438,7 +445,7 @@ export default {
     },
 
     openDialog() {
-      this.$emit("openDialog");
+      this.$emit("openDialog", this.$route.params.id);
     },
 
     //圖表按鈕切換狀態

@@ -76,7 +76,7 @@
               <Button
                 buttonText="匯出"
                 class="bg-green-700"
-                @click="exportExcel"
+                @click="exportExcel(project.pjId, project.pjName)"
               />
             </td>
           </tr>
@@ -132,6 +132,7 @@ export default {
       currentPage: 1,
       itemsPerPage: 10,
       titleUserName: "專案狀態查詢 : ",
+      userName: "",
     };
   },
 
@@ -217,21 +218,41 @@ export default {
           this.titleUserName = String(
             `專案狀態查詢 : ${response.data[0].name}`
           );
+          this.userName = response.data[0].name;
         })
         .catch((error) => console.error(error));
     },
 
-    // exportExcel() {
-    //   API.post("/api/ProjectAnalysis/DownloadAllProjectDataExcel", {
-    //     id: "2023-14",
-    //     staffid: "All",
-    //   })
-    //     .then((response) => {
-    //       console.log(response);
-    //       console.log("click");
-    //     })
-    //     .catch((error) => console.error(error));
-    // },
+    exportExcel(projectId, projectName) {
+      const userConfirmed = window.confirm(
+        `確定要匯出 (${projectName} - ${projectId}(${this.userName}))) 的Excel表單嗎?`
+      );
+      if (userConfirmed) {
+        const formData = new FormData();
+        formData.append("id", projectId);
+        formData.append("staffid", this.$route.params.id);
+
+        API.post("/api/ProjectAnalysis/DownloadAllProjectDataExcel", formData, {
+          responseType: "blob",
+          headers: {
+            "Content-Type": "application/vnd.ms-excel;charset=utf-8",
+          },
+        })
+          .then((response) => {
+            const blob = new Blob([response.data], {
+              type: "application/vnd.ms-excel",
+            });
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${projectName}(${projectId})-${this.userName}.xlsx`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+          })
+          .catch((error) => console.error(error));
+      }
+    },
 
     searchStatus() {
       const date = new Date();
