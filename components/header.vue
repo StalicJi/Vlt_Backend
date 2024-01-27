@@ -40,8 +40,7 @@
         <h1>Hi, 傑森史坦森</h1>
       </div>
       <div class="default-btn">
-        <VaIcon name="logout" size="16px" color="#fff" />
-        <p class="text-white ml-1 text-sm">登出</p>
+        <p class="text-white text-sm">登出</p>
       </div>
     </div>
   </div>

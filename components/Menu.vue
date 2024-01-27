@@ -54,7 +54,7 @@
             hover-color="textInverted"
             class="hover:shadow-lg"
           >
-            <VaSidebarItemContent @click="$router.push(item.router)">
+            <VaSidebarItemContent @click="handleItemClick(item.router)">
               <VaIcon :name="item.icon" />
               <VaSidebarItemTitle>{{ item.title }}</VaSidebarItemTitle>
             </VaSidebarItemContent>
@@ -75,6 +75,14 @@ import { ref } from "vue";
 const activeElement = ref("專案統計");
 
 const router = useRouter();
+
+const handleItemClick = (route) => {
+  if (route.startsWith("http")) {
+    window.open(route, "_blank");
+  } else {
+    router.push(route);
+  }
+};
 
 const items = [
   // {
@@ -119,5 +127,10 @@ const items = [
   //   icon: "settings",
   //   children: [{ title: "基本資料修改" }, { title: "帳號密碼變更" }],
   // },
+  {
+    title: "員工園地",
+    icon: "settings_accessibility",
+    router: "https://www.vlt.com.tw:8443/admin.html#",
+  },
 ];
 </script>
