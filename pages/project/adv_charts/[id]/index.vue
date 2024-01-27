@@ -2,14 +2,14 @@
   <div class="p-7 flex flex-col">
     <div class="flex-btw">
       <PageTitle icon-name="search" :page-title="projectTitle" />
-      <div
+      <!-- <div
         class="default-btn bg-green-700"
         :projectId="this.$route.params.id"
         @click="openDialog"
       >
         <VaIcon name="ios_share" size="16px" color="#fff" />
         <p class="text-white ml-1 text-sm">EXCEL</p>
-      </div>
+      </div> -->
     </div>
     <div class="flex flex-col h-full">
       <div class="grid grid-flow-col grid-cols-6 mt-8 gap-4 row-span-1">
@@ -37,7 +37,7 @@
       </div>
 
       <div class="my-4 border-t border-gray-300 flex-1 flex flex-col">
-        <div class="flex gap-4 pt-4 w-[40rem]">
+        <div class="flex gap-4 pt-4 w-[45rem]">
           <VaDateInput
             id="datetest"
             background="#fff"
@@ -52,6 +52,12 @@
             v-model="enddate"
           />
           <Button buttonText="查詢" @click="findChart" />
+          <div
+            class="bg-gray-200 flex-center px-4 py-2 rounded-md text-white cursor-not-allowed text-sm exportBtn"
+            @click="exportExcel"
+          >
+            <span>匯出</span>
+          </div>
         </div>
         <div class="flex gap-4 mt-4">
           <Button
@@ -133,6 +139,11 @@ export default {
       projectTitle: "專案名稱:",
       projectSTime: "",
       projectETime: "",
+      disabledExport: false,
+      queryClicked: false,
+      selectSTime: "",
+      selectETime: "",
+      filePjName: "",
     };
   },
 
@@ -191,6 +202,80 @@ export default {
         startISOString,
         endISOString
       );
+      this.disabledExport = false;
+      this.queryClicked = true;
+
+      const btn = document.querySelector(".exportBtn");
+      if (this.queryClicked) {
+        btn.classList.remove("cursor-not-allowed");
+        btn.classList.add("bg-green-700", "cursor-pointer");
+      }
+      this.selectSTime = startISOString;
+      this.selectETime = endISOString;
+    },
+
+    exportExcel() {
+      const btn = document.querySelector(".exportBtn");
+      const removeClassList = () => {
+        return btn.classList.remove("bg-green-700", "cursor-pointer");
+      };
+      const addClassList = () => {
+        return btn.classList.add("bg-gray-200", "cursor-not-allowed");
+      };
+
+      if (this.queryClicked) {
+        if (
+          confirm(
+            `** 確定要匯出EXCEL資料嗎? ** \n\n 開始日期：${this.selectSTime} \n 結束日期：${this.selectETime}`
+          )
+        ) {
+          this.getAllProjectDetail();
+          this.queryClicked = false;
+          removeClassList();
+          addClassList();
+        } else {
+          this.queryClicked = false;
+          removeClassList();
+          addClassList();
+        }
+      }
+    },
+
+    getAllProjectDetail() {
+      const project_id = this.$route.params.id;
+      const filePjName = this.filePjName;
+      const selectSTime = this.selectSTime;
+      const selectETime = this.selectETime;
+
+      const formData = new FormData();
+      formData.append("id", project_id);
+      formData.append("staffid", "All");
+      formData.append("startdate", selectSTime);
+      formData.append("enddate", selectETime);
+
+      API.post(
+        "api/ProjectAnalysis/DownloadindividualProjectInformationExcel",
+        formData,
+        {
+          responseType: "blob",
+          headers: {
+            "Content-Type": "application/vnd.ms-excel;charset=utf-8",
+          },
+        }
+      )
+        .then((response) => {
+          const blob = new Blob([response.data], {
+            type: "application/vnd.ms-excel",
+          });
+
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `(${project_id})${filePjName} - ${selectSTime} ~ ${selectETime}.xlsx`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => console.error(error));
     },
 
     getProjectInfo(project_id) {
@@ -232,6 +317,7 @@ export default {
           projectData.forEach((data) => {
             if (data.pj_id === this.$route.params.id) {
               this.projectTitle = String(`專案名稱：${data.pj_name}`);
+              this.filePjName = data.pj_name;
             }
           });
         })
@@ -444,9 +530,9 @@ export default {
       option && myChart.setOption(option);
     },
 
-    openDialog() {
-      this.$emit("openDialog", this.$route.params.id);
-    },
+    // openDialog() {
+    //   this.$emit("openDialog", this.$route.params.id);
+    // },
 
     //圖表按鈕切換狀態
     updateChartBackground(areaColor, workColor, emploColor) {

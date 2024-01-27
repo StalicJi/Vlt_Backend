@@ -10,6 +10,7 @@
       <VaSelect
         v-model="valueSingle"
         :options="options"
+        searchable
         highlight-matched-text
         background="#fff"
         class="w-full"
