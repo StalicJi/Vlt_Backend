@@ -1,46 +1,61 @@
 <template>
   <div class="grid gap-4 grid-flow-row grid-rows-12 flex-1">
-    <!-- !時間選擇 -->
     <div class="flex gap-4 w-full row-span-1 h-12">
-      <Button
-        buttonText="專案時間"
-        @click="showYBarChartCnt"
-        :class="{
-          'focus:bg-black': activeChart === 'bar',
-          'focus:bg-gray': activeChart !== 'bar',
-        }"
-      />
-      <Button
-        buttonText="工作型態"
-        @click="showPieChartCnt"
-        :class="{
-          'focus:bg-black': activeChart === 'pie',
-          'focus:bg-gray': activeChart !== 'pie',
-        }"
-      />
-      <VaDateInput background="#fff" color="info" placeholder="請選擇起始日" />
-      <VaDateInput background="#fff" color="info" placeholder="請選擇結束日" />
-      <Button buttonText="查詢" @click="" />
+      <div class="flex h-full w-full gap-4">
+        <VaDateInput
+          id="datetest"
+          background="#fff"
+          color="info"
+          placeholder="請選擇起始日"
+          v-model="startdate"
+        />
+        <VaDateInput
+          background="#fff"
+          color="info"
+          placeholder="請選擇結束日"
+          v-model="endtdate"
+        />
+      </div>
+      <Button buttonText="查詢" @click="findChart" class="w-20" />
     </div>
 
+    <div class="flex gap-4">
+      <Button
+        buttonText="專案時間柱狀圖"
+        class="bg-[#126992] yBarBtnBg"
+        @click="showYBarChartCnt"
+      />
+      <Button
+        buttonText="工作型態圓餅圖"
+        class="pieBtnBg"
+        @click="showPieChartCnt"
+      />
+    </div>
     <div
       class="row-span-11 gap-4 border rounded-lg drop-shadow-lg bg-white px-10"
     >
       <!-- 橫向柱狀圖 -->
-      <div class="pt-4 h-full" :class="{ hidden: showPieChart }">
-        <p class="text-center text-xl pb-4">專案進行總時間</p>
-        <div id="yBarChart" style="height: 100%; width: 100%"></div>
+      <div class="pt-8 h-full" :class="{ hidden: showPieChart }">
+        <p class="text-center text-xl pb-8">
+          專案進行總時間 ({{ formatDate(new Date(pjSearchStartTime)) }} ~
+          {{ formatDate(new Date(pjSearchEndTime)) }})
+        </p>
+        <div id="yBarChart" style="height: 85%; width: 100%"></div>
       </div>
       <!-- 圓餅圖 -->
-      <div class="pt-4 h-full" :class="{ hidden: !showPieChart }">
-        <p class="text-center text-xl pb-4">工作型態圓餅圖</p>
-        <div id="pieChart" style="height: 90%; width: 100%"></div>
+      <div class="pt-8 h-full" :class="{ hidden: !showPieChart }">
+        <p class="text-center text-xl pb-8">
+          工作型態圓餅圖 ({{ formatDate(new Date(pjSearchStartTime)) }} ~
+          {{ formatDate(new Date(pjSearchEndTime)) }})
+        </p>
+        <div id="pieChart" style="height: 85%; width: 100%"></div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import API from "../src/api";
 import Button from "../components/element/Button.vue";
 import * as echarts from "echarts";
 
@@ -49,28 +64,223 @@ export default {
     Button,
   },
 
+  props: {
+    id: {
+      type: String,
+    },
+  },
+
   data() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
     return {
-      value: new Date(2000, 0, 1),
+      value: new Date(year, 0, 1),
+      startdate: new Date(year, 0, 1),
+      endtdate: new Date(year, month, day),
       showPieChart: false,
-      activeChart: "bar",
+      pjSearchStartTime: "",
+      pjSearchEndTime: "",
+      myChart2: null,
     };
   },
 
   mounted() {
-    this.initYBarChart();
+    const date = new Date();
+    const year = date.getFullYear();
+    let start = year + "-01-01T00:00:00.000Z";
+    let end = year + "-12-31T00:00:00.000Z";
+
+    this.pjSearchStartTime = this.startdate.toISOString();
+    this.pjSearchEndTime = this.endtdate.toISOString();
+    this.creatinitYBarChart(new Date(start), new Date(end));
     this.showPieChart = !this.showPieChart;
+
     this.$nextTick(() => {
-      this.initPieChart();
+      this.creatinitPieChart(
+        new Date(this.startdate).toISOString(),
+        new Date(this.endtdate).toISOString()
+      );
       this.showPieChart = !this.showPieChart;
     });
   },
 
   methods: {
+    findChart() {
+      const date = new Date();
+      const twoYearsAgo = new Date();
+      twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+
+      if (this.endtdate < this.startdate) {
+        alert("結束時間應晚於起始時間");
+      } else if (this.startdate <= twoYearsAgo) {
+        alert("搜尋區間應在兩年以內");
+      } else if (this.endtdate >= date) {
+        alert("結束時間應早於當前時間");
+      } else {
+        this.pjSearchStartTime = this.startdate.toISOString();
+        this.pjSearchEndTime = this.endtdate.toISOString();
+
+        this.creatinitYBarChart(
+          new Date(this.startdate).toISOString(),
+          new Date(this.endtdate).toISOString()
+        );
+        this.creatinitPieChart(
+          new Date(this.startdate).toISOString(),
+          new Date(this.endtdate).toISOString()
+        );
+      }
+    },
+
+    // -------------------Chart-------------------
+
+    creatinitYBarChart(start, end) {
+      if (this.$route.path === "/") {
+        API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanel", {
+          id: "All",
+          startdate: start,
+          enddate: end,
+        })
+          .then((response) => {
+            let yLabel = [];
+            let personValue = [];
+            let series = [];
+
+            for (let key in response.data.personhours) {
+              if (response.data.personhours.hasOwnProperty(key)) {
+                yLabel.push(key);
+                personValue.push(response.data.personhours[key]);
+                // console.log(personValue);
+              }
+            }
+
+            for (let i = 0; i < response.data.projectList.length; i++) {
+              let seriesdata = [];
+              for (let j = 0; j < personValue.length; j++) {
+                if (
+                  Object.keys(personValue[j]).includes(
+                    response.data.projectList[i]
+                  )
+                ) {
+                  seriesdata.push(personValue[j][response.data.projectList[i]]);
+                  // console.log(seriesdata);
+                } else {
+                  seriesdata.push(0);
+                  // console.log(seriesdata);
+                }
+              }
+
+              series.push({
+                name: response.data.projectList[i],
+                type: "bar",
+                data: seriesdata,
+              });
+            }
+            this.initYBarChart(yLabel, series);
+            this.showPieChart = !this.showPieChart;
+
+            this.$nextTick(() => {
+              this.initPieChart();
+              this.showPieChart = !this.showPieChart;
+            });
+          })
+          .catch((error) => console.error(error));
+      } else if (this.$route.path === `/user/${this.id}`) {
+        API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanelPerson", {
+          id: this.id,
+          startdate: start,
+          enddate: end,
+        })
+          .then((response) => {
+            let yLabel = [];
+
+            let seriesdata = [];
+            let series = [];
+
+            const personhoursData = response.data.personhours;
+            for (const projectName in personhoursData) {
+              if (personhoursData.hasOwnProperty(projectName)) {
+                const hours = personhoursData[projectName];
+                seriesdata.push(hours);
+              }
+              yLabel.push(projectName);
+            }
+
+            series.push({
+              name: yLabel,
+              type: "bar",
+              data: seriesdata,
+            });
+
+            this.initYBarChart(yLabel, series);
+            this.showPieChart = !this.showPieChart;
+            this.$nextTick(() => {
+              this.initPieChart();
+              this.showPieChart = !this.showPieChart;
+            });
+          })
+          .catch((error) => console.error(error));
+      } else {
+        console.log("error path");
+      }
+    },
+
+    creatinitPieChart(start, end) {
+      if (this.$route.path === "/") {
+        API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanel", {
+          id: "All",
+          startdate: start,
+          enddate: end,
+        })
+          .then((response) => {
+            let worktypesdata = [];
+
+            let worktypeskeys = Object.keys(response.data.worktypes);
+
+            for (let i = 0; i < worktypeskeys.length; i++) {
+              worktypesdata.push({
+                value: response.data.worktypes[worktypeskeys[i]],
+                name: worktypeskeys[i],
+              });
+            }
+            setTimeout(() => {
+              this.initPieChart(worktypesdata);
+            }, 800);
+          })
+          .catch((error) => console.log(error));
+      } else if (this.$route.path === `/user/${this.id}`) {
+        API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanelPerson", {
+          id: this.id,
+          startdate: start,
+          enddate: end,
+        })
+          .then((response) => {
+            let worktypesdata = [];
+
+            let worktypeskeys = Object.keys(response.data.worktypes);
+
+            for (let i = 0; i < worktypeskeys.length; i++) {
+              worktypesdata.push({
+                value: response.data.worktypes[worktypeskeys[i]],
+                name: worktypeskeys[i],
+              });
+            }
+            setTimeout(() => {
+              this.initPieChart(worktypesdata);
+            }, 800);
+          })
+          .catch((error) => console.error(error));
+      } else {
+        console.log("error path");
+      }
+    },
+
     // 橫向長條圖
-    initYBarChart() {
+    initYBarChart(yLabel, series) {
       const chartDom = document.getElementById("yBarChart");
       if (!chartDom) return;
+
       const myChart = echarts.init(chartDom);
 
       const option = {
@@ -86,13 +296,7 @@ export default {
           textStyle: {
             fontSize: 16,
           },
-          data: [
-            "專案AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "專案BBBBBBBBBBBBBBBBBBBBBBBBB",
-            "專案CCCCCCCCCCCCCCCCCCC",
-            "專案DDDDDDDD",
-            "專案EEEEEEEEEEEE",
-          ],
+          data: series,
         },
         grid: {
           left: 100,
@@ -104,55 +308,38 @@ export default {
           type: "value",
           name: "小時",
           axisLabel: {
-            formatter: "{value}",
+            fontSize: 16,
           },
         },
         yAxis: {
           type: "category",
           inverse: true,
-          data: ["黃國維", "黃琮銘", "邱育聖", "蔡維純", "紀宗文"],
+          data: yLabel,
           axisLabel: {
             margin: 20,
+            fontSize: 16,
+            formatter: function (value) {
+              if (value.length > 4) {
+                return value.substring(0, 4) + "...";
+              } else {
+                return value;
+              }
+            },
           },
         },
-        series: [
-          {
-            name: "專案AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            type: "bar",
-            data: [270, 170, 30, 22, 45],
-          },
-          {
-            name: "專案BBBBBBBBBBBBBBBBBBBBBBBBB",
-            type: "bar",
-            data: [150, 105, 110, 200, 30],
-          },
-          {
-            name: "專案CCCCCCCCCCCCCCCCCCC",
-            type: "bar",
-            data: [220, 82, 63, 10, 133],
-          },
-          {
-            name: "專案DDDDDDDD",
-            type: "bar",
-            data: [220, 82, 63, 10, 133],
-          },
-          {
-            name: "專案EEEEEEEEEEEE",
-            type: "bar",
-            data: [150, 105, 110, 200, 30],
-          },
-        ],
+        series: series,
       };
 
       option && myChart.setOption(option);
-      console.log("BAR生成完畢");
     },
 
     // 圓餅圖
-    initPieChart() {
+    initPieChart(datalist) {
       const chartDom = document.getElementById("pieChart");
       if (!chartDom) return;
-      const myChart = echarts.init(chartDom);
+
+      const myChart2 = echarts.init(chartDom);
+
       const option = {
         tooltip: {
           show: true,
@@ -167,40 +354,40 @@ export default {
         series: [
           {
             type: "pie",
-            data: [
-              { value: 80, name: "程式設計" },
-              { value: 5, name: "公司行政事務" },
-              { value: 34, name: "技術研發" },
-              { value: 34, name: "自行研讀" },
-              { value: 34, name: "整合測試" },
-              { value: 34, name: "程式開發及單元測試-易" },
-              { value: 4, name: "招標文件了解" },
-              { value: 5, name: "參加內部會議" },
-              { value: 13, name: "會議資料準備" },
-              { value: 20, name: "程式開發及單元測試-中" },
-              { value: 10, name: "程式開發及單元測試-難" },
-              { value: 9, name: "a" },
-              { value: 5, name: "b" },
-              { value: 13, name: "c" },
-              { value: 20, name: "d" },
-              { value: 10, name: "e" },
-              { value: 9, name: "f" },
-            ],
+            data: datalist,
+            label: {
+              fontSize: 16,
+            },
           },
         ],
       };
-      option && myChart.setOption(option);
-      console.log("PIE生成完畢");
+      option && myChart2.setOption(option);
     },
 
+    //圖表按鈕切換狀態
+    updateChartBackground(areaColor, workColor) {
+      const yBarBtnBg = document.querySelector(".yBarBtnBg");
+      const pieBtnBg = document.querySelector(".pieBtnBg");
+      yBarBtnBg.style.background = areaColor;
+      pieBtnBg.style.background = workColor;
+    },
     showYBarChartCnt() {
-      this.activeChart = "bar";
       this.showPieChart = false;
+      this.updateChartBackground("#126992", "#6B7280");
     },
 
     showPieChartCnt() {
-      this.activeChart = "pie";
       this.showPieChart = true;
+      this.updateChartBackground("#6B7280", "#126992");
+    },
+
+    //時間顯示畫面的格式調整
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      return `${year}/${month}/${day}`;
     },
   },
 };

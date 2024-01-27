@@ -4,12 +4,13 @@
   >
     <div class="flex-btw">
       <p class="text-white">專案選擇器</p>
-      <Button buttonText="查詢" />
+      <Button buttonText="查詢" @click="projectSearch" />
     </div>
     <div class="mt-4 px-2">
       <VaSelect
         v-model="valueSingle"
         :options="options"
+        searchable
         highlight-matched-text
         background="#fff"
         class="w-full"
@@ -20,43 +21,103 @@
 </template>
 
 <script>
-import axios from "axios";
+import API from "../src/api";
 import Button from "../components/element/Button.vue";
 export default {
   components: {
     Button,
   },
+
+  props: {
+    id: {
+      type: String,
+      default: "",
+    },
+    selectedProjectId: {
+      type: String,
+      default: "",
+    },
+  },
   name: "Searchable",
 
   data() {
     return {
-      options: [
-        "員工園地專案統計功能開發",
-        "113年-嘉義市路燈管理系統軟體顧問服務維護",
-        "好水源網站",
-        "臺南市都市發展資訊系統",
-        "屏東7建物",
-        "112年北宜高網站功能增修",
-        "112年晨豐科技官方網站變更設計計畫",
-        "110年度新竹縣公共設施管線位置調查暨系統建置計畫委託資訊服務案",
-      ],
-      valueSingle: "員工園地專案統計功能開發",
-      // options: [],
-      // valueSingle: "",
+      options: [],
+      valueSingle: "",
+      selectPj_id: "",
     };
   },
 
-  // beforeMount() {
-  //   //POST請求
-  //   axios
-  //     .post("https://192.168.1.243/api/ProjectAnalysis/ProjectSelector", {
-  //       id: "All",
-  //     })
-  //     .then((response) => {
-  //       this.options = response.data.projectNames;
-  //       this.valueSingle = response.data.projectNames[0];
-  //     })
-  //     .catch((error) => console.log("11"));
-  // },
+  mounted() {
+    if (this.$route.path === "/project") {
+      this.getAllSelect();
+    } else if (this.$route.path === `/user/${this.id}/selectstaffpoject`) {
+      this.getIdSelect(this.id);
+    } else {
+      console.log("The selector is not in a valid link");
+    }
+  },
+
+  watch: {
+    valueSingle(newValue) {
+      const reversedValue = newValue.split("").reverse().join("");
+      const extractedSubstring = reversedValue.slice(1, 8);
+      const finalResult = extractedSubstring.split("").reverse().join("");
+      this.selectPj_id = finalResult;
+    },
+  },
+
+  methods: {
+    getAllSelect() {
+      API.post("api/ProjectAnalysis/ProjectSelector", {
+        id: "All",
+      })
+        .then((response) => {
+          const allSelectData = response.data;
+          let options = [];
+
+          allSelectData.forEach((data) => {
+            options.push(`${data.pj_name} (${data.pj_id})`);
+          });
+          this.options = options;
+          this.valueSingle = options[0];
+        })
+        .catch((error) =>
+          console.error("Error fetching all project data:", error)
+        );
+    },
+
+    getIdSelect(userid) {
+      API.post("api/ProjectAnalysis/ProjectSelector", {
+        id: userid,
+      })
+        .then((response) => {
+          if (response) {
+            const staffSelectData = response.data;
+            let options = [];
+
+            staffSelectData.forEach((data) => {
+              options.push(`${data.pj_name} (${data.pj_id})`);
+            });
+
+            this.options = options;
+            this.valueSingle = options[0];
+          } else {
+            this.valueSingle = "此員工無專案紀錄...";
+          }
+        })
+        .catch((error) =>
+          console.error("Error fetching project data with user id :", error)
+        );
+    },
+
+    projectSearch() {
+      if (
+        this.$route.path === `/user/${this.id}/selectstaffpoject` ||
+        this.$route.path === "/project"
+      )
+        this.$emit("selectId", this.selectPj_id);
+    },
+  },
 };
 </script>

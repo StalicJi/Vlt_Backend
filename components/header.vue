@@ -2,13 +2,28 @@
   <div class="flex-btw px-7">
     <div class="flex">
       <div class="header-btn">
-        <VaIcon name="home" size="20px" color="#fff" @click="goHomePage" />
+        <VaIcon
+          name="home"
+          size="20px"
+          color="#fff"
+          @click="$router.push({ path: '/' })"
+        />
       </div>
       <div class="header-btn">
-        <VaIcon name="arrow_back" size="20px" color="#fff" />
+        <VaIcon
+          name="arrow_back"
+          size="20px"
+          color="#fff"
+          @click="$router.back()"
+        />
       </div>
       <div class="header-btn">
-        <VaIcon name="arrow_forward" size="20px" color="#fff" />
+        <VaIcon
+          name="arrow_forward"
+          size="20px"
+          color="#fff"
+          @click="$router.forward()"
+        />
       </div>
       <div class="header-btn">
         <VaIcon name="refresh" size="20px" color="#fff" @click="reLoad" />
@@ -34,10 +49,10 @@
 
 <script>
 export default {
+  setup() {
+    const router = useRouter();
+  },
   methods: {
-    goHomePage() {
-      this.$router.push("/");
-    },
     reLoad() {
       window.location.reload();
     },

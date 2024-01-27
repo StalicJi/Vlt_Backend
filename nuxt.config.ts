@@ -9,7 +9,6 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-
   modules: ["@nuxtjs/tailwindcss", "@nuxt/image", "@vuestic/nuxt"],
 
   vuestic: {
@@ -17,6 +16,6 @@ export default defineNuxtConfig({
       // Config here
     },
   },
-  // plugins: ["/plugins/jquery.js"],
+
   plugins: [{ src: "~/plugins/jquery", mode: "client" }],
 });

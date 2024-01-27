@@ -2,26 +2,27 @@
   <div class="grid grid-flow-row p-7">
     <!-- Head -->
     <div class="flex-btw">
-      <PageTitle icon-name="bar_chart" page-title="專案統計" />
       <div class="flex">
+        <PageTitle icon-name="person" :page-title="titleUserName" />
         <Button
           buttonText="專案查詢"
-          @click="$router.push({ path: '/project' })"
-          class="ml-2"
+          @click="
+            $router.push({
+              path: `/user/${$route.params.id}/selectstaffpoject`,
+            })
+          "
+          class="ml-4"
         />
-        <Button
-          buttonText="個人查詢"
-          @click="$router.push({ path: '/user' })"
-          class="ml-2"
-        />
+      </div>
+      <div class="flex-btw w-80">
+        <h1 class="ml-4 text-xl">部門：{{ searchDepName }}</h1>
+        <h1 class="ml-4 text-xl">職稱：{{ searchJobName }}</h1>
       </div>
     </div>
 
     <!-- Section -->
     <div class="mt-8 grid grid-flow-col grid-cols-5 gap-4">
       <div class="col-span-2 grid grid-flow-row grid-rows-5 gap-4">
-        <!-- <ProjectSelect class="row-span-1" /> -->
-
         <div class="row-span-2 grid grid-cols-2 grid-flow-row gap-4">
           <AllStaCard
             bgColorClass="bg-[#ad7596]"
@@ -63,19 +64,19 @@
         </div>
       </div>
       <div class="rounded-md drop-shadow-lg col-span-3 flex">
-        <YearOfCal />
+        <YearOfCal :id="$route.params.id" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import API from "~/src/api";
-import Button from "~/components/element/Button.vue";
-import ProjectSelect from "~/components/ProjectSelect.vue";
-import PageTitle from "~/components/element/PageTitle.vue";
-import YearOfCal from "~/components/YearOfCal.vue";
-import AllStaCard from "~/components/element/AllStatisticsCard.vue";
+import API from "../../../src/api";
+import Button from "../../../components/element/Button.vue";
+import ProjectSelect from "../../../components/ProjectSelect.vue";
+import PageTitle from "../../../components/element/PageTitle.vue";
+import YearOfCal from "../../../components/YearOfCal.vue";
+import AllStaCard from "../../../components/element/AllStatisticsCard.vue";
 import * as echarts from "echarts";
 
 export default {
@@ -97,27 +98,61 @@ export default {
       ProjectExecutingNumber: 0,
       ProjectWarrantygNumber: 0,
       ProjectClosethecaseNumber: 0,
+      searchUserName: "",
+      searchDepName: "",
+      searchJobName: "",
+      titleUserName: "",
     };
   },
   mounted() {
-    API.post("api/ProjectAnalysis/GetProjectData", {
-      id: "All",
-    })
-      .then((response) => {
-        this.ProjectNumber = response.data[0].projectNumber;
-        this.ProjecBusinessNumber = response.data[0].projecBusinessNumber;
-        this.ProjectExecutingNumber = response.data[0].projectExecutingNumber;
-        this.ProjectWarrantygNumber = response.data[0].projectWarrantygNumber;
-        this.ProjectClosethecaseNumber =
-          response.data[0].projectClosethecaseNumber;
-
-        this.initBarChart();
-      })
-      .catch((error) => console.error("Error fetching project data:", error));
+    this.getStaffInfo();
+    this.getStaffProjectData();
   },
 
   methods: {
-    initBarChart() {
+    getStaffInfo() {
+      API.post("/api/ProjectAnalysis/PostStaffData", {
+        Staffid: this.$route.params.id,
+      })
+        .then((response) => {
+          const userId = response.data[0].staff_id;
+          // console.log(userId);
+
+          if (userId === this.$route.params.id) {
+            this.searchUserName = response.data[0].name;
+            this.searchDepName = response.data[0].dep_name;
+            this.searchJobName = response.data[0].jobname;
+            this.titleUserName = String(
+              "個人專案統計" + " : " + " " + response.data[0].name
+            );
+          } else {
+            console.error("User ID mismatch");
+          }
+        })
+        .catch((error) => {
+          this.titleUserName = "查無此人";
+          console.error("Error fetching user data:", error);
+        });
+    },
+
+    getStaffProjectData() {
+      API.post("/api/ProjectAnalysis/GetProjectData", {
+        id: this.$route.params.id,
+      })
+        .then((response) => {
+          this.ProjectNumber = response.data[0].projectNumber;
+          this.ProjecBusinessNumber = response.data[0].projecBusinessNumber;
+          this.ProjectExecutingNumber = response.data[0].projectExecutingNumber;
+          this.ProjectWarrantygNumber = response.data[0].projectWarrantygNumber;
+          this.ProjectClosethecaseNumber =
+            response.data[0].projectClosethecaseNumber;
+
+          this.initYBarChart();
+        })
+        .catch((error) => console.error("Error fetching project data:", error));
+    },
+
+    initYBarChart() {
       const chartDom = document.getElementById("barChart");
       const myChart = echarts.init(chartDom);
 
@@ -133,7 +168,6 @@ export default {
           axisPointer: {
             type: "line",
           },
-          formatter: "{c} 件",
         },
         xAxis: {
           type: "category",
@@ -183,7 +217,7 @@ export default {
 
     goAllInfoPage(label) {
       this.$router.push({
-        path: "/projectstatus",
+        path: `/user/${this.$route.params.id}/projectstatus`,
         query: { status: label },
       });
     },
