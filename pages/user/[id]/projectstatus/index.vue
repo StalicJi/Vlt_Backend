@@ -225,7 +225,7 @@ export default {
 
     exportExcel(projectId, projectName) {
       const userConfirmed = window.confirm(
-        `確定要匯出 (${projectName} - ${projectId}(${this.userName}))) 的Excel表單嗎?`
+        `** 確定要匯出Excel表單嗎? ** \n\n專案名稱 : (${projectId})${projectName}\n查詢員工 : ${this.userName}`
       );
       if (userConfirmed) {
         const formData = new FormData();

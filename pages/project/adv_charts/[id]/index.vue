@@ -226,7 +226,7 @@ export default {
       if (this.queryClicked) {
         if (
           confirm(
-            `** 確定要匯出EXCEL資料嗎? ** \n\n 開始日期：${this.selectSTime} \n 結束日期：${this.selectETime}`
+            `** 確定要匯出EXCEL表單嗎? ** \n\n 開始日期：${this.selectSTime} \n 結束日期：${this.selectETime}`
           )
         ) {
           this.getAllProjectDetail();
