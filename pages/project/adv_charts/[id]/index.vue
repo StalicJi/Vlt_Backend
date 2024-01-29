@@ -182,7 +182,7 @@ export default {
       const endTime = this.projectETime.split("T")[0];
 
       if (startISOString < startTime) {
-        alert(`起始時間應早晚於或等於 ${startTime}`);
+        alert(`起始時間應晚於或等於 ${startTime}`);
         return;
       }
 
