@@ -77,6 +77,7 @@ import PageTitle from "~/components/element/PageTitle.vue";
 import YearOfCal from "~/components/YearOfCal.vue";
 import AllStaCard from "~/components/element/AllStatisticsCard.vue";
 import * as echarts from "echarts";
+import axios from "axios";
 
 export default {
   components: {
@@ -100,23 +101,32 @@ export default {
     };
   },
   mounted() {
-    API.post("api/ProjectAnalysis/GetProjectData", {
-      id: "All",
-    })
-      .then((response) => {
-        this.ProjectNumber = response.data[0].projectNumber;
-        this.ProjecBusinessNumber = response.data[0].projecBusinessNumber;
-        this.ProjectExecutingNumber = response.data[0].projectExecutingNumber;
-        this.ProjectWarrantygNumber = response.data[0].projectWarrantygNumber;
-        this.ProjectClosethecaseNumber =
-          response.data[0].projectClosethecaseNumber;
-
-        this.initBarChart();
-      })
-      .catch((error) => console.error("Error fetching project data:", error));
+    // this.getUrlToken();
+    this.createBarChart();
   },
 
   methods: {
+    // getUrlToken() {
+    //   const router = useRoute();
+    //   console.log(router.query.token);
+    // },
+    createBarChart() {
+      API.post("api/ProjectAnalysis/GetProjectData", {
+        id: "All",
+      })
+        .then((response) => {
+          this.ProjectNumber = response.data[0].projectNumber;
+          this.ProjecBusinessNumber = response.data[0].projecBusinessNumber;
+          this.ProjectExecutingNumber = response.data[0].projectExecutingNumber;
+          this.ProjectWarrantygNumber = response.data[0].projectWarrantygNumber;
+          this.ProjectClosethecaseNumber =
+            response.data[0].projectClosethecaseNumber;
+
+          this.initBarChart();
+        })
+        .catch((error) => console.error("Error fetching project data:", error));
+    },
+
     initBarChart() {
       const chartDom = document.getElementById("barChart");
       const myChart = echarts.init(chartDom);
