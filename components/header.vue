@@ -32,7 +32,7 @@
     <div class="flex-center">
       <div class="flex-center mr-4 text-lg">
         <h1>
-          Hi, <span class="ml-2">{{ userName }}</span>
+          Hi, <span class="ml-3">{{ userName }}</span>
         </h1>
       </div>
       <div class="default-btn">
