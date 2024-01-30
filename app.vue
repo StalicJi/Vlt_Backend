@@ -28,11 +28,11 @@ let decryptedToken = "";
 
 const getUrlToken = () => {
   const key = "ji3g4rupul4";
-  console.log(route.fullPath);
+  // console.log(route.query.token);
   const tokenPart = route.fullPath.split("?")[1];
   const tokenArray = tokenPart.split("&");
   const token = tokenArray[0].split("=")[1];
-  console.log(token);
+  // console.log(token);
 
   try {
     const bytes = CryptoJS.AES.decrypt(token, key);
