@@ -71,6 +71,7 @@
 import API from "../../src/api";
 import PageTitle from "../../components/element/PageTitle.vue";
 import Button from "../../components/element/Button.vue";
+import { getTokenFromLocal } from "~/utils/getToken";
 import { checkPath } from "~/utils/routerControll";
 
 export default {
@@ -121,12 +122,31 @@ export default {
         Staffid: "All",
       })
         .then((response) => {
-          setTimeout(() => {
-            this.users = response.data.sort((a, b) => {
-              return b.staff_duty - a.staff_duty;
-            });
-            this.loading = false;
-          }, 1000);
+          const tokenObject = getTokenFromLocal();
+
+          if (tokenObject.groupId === "DepManager") {
+            //部門經理條件
+            setTimeout(() => {
+              this.users = response.data
+                .filter((user) => user.dep_id === tokenObject.depId)
+                .sort((a, b) => b.staff_duty - a.staff_duty);
+              this.loading = false;
+            }, 1000);
+          } else if (
+            ["sysUser", "Cashier", "Supervisor", "AssistanManager"].includes(
+              tokenObject.groupId
+            )
+          ) {
+            //一班員工條件
+            window.location.href = "/404NotFound";
+          } else {
+            setTimeout(() => {
+              this.users = response.data.sort((a, b) => {
+                return b.staff_duty - a.staff_duty;
+              });
+              this.loading = false;
+            }, 1000);
+          }
         })
         .catch((error) => {
           console.error("Error fetching user data:", error);

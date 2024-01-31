@@ -83,7 +83,8 @@ export default {
   methods: {
     handleItemClick(route) {
       if (route.startsWith("http")) {
-        window.open(route, "_blank");
+        // window.open(route, "_blank");
+        window.location.href = route;
       } else {
         this.$router.push(route);
       }

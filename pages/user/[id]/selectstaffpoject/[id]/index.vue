@@ -91,7 +91,6 @@ import ProjectInfoCard from "~/components/element/ProjectInfoCard.vue";
 import Button from "~/components/element/Button.vue";
 import * as echarts from "echarts";
 import { getTokenFromLocal } from "~/utils/getToken";
-// import { checkPath } from "~/utils/routerControll";
 
 export default {
   components: {

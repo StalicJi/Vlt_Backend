@@ -102,7 +102,7 @@ export default {
         Staffid: this.$route.params.id,
       })
         .then((response) => {
-          console.log(response);
+          // console.log(response);
           this.pageTitle = String(
             "個人專案查詢" + " : " + " " + response.data[0].name
           );

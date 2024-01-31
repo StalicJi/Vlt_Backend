@@ -16,6 +16,7 @@
 import Header from "./components/Header.vue";
 import SideBar from "./components/Sidebar.vue";
 import CryptoJS from "crypto-js";
+import { getTokenFromLocal } from "~/utils/getToken";
 
 export default {
   components: {
@@ -29,9 +30,6 @@ export default {
     });
   },
 
-  // beforeMount() {
-  //   this.getUrlToken();
-  // },
   mounted() {
     this.getUrlToken();
   },
@@ -56,11 +54,54 @@ export default {
         const stringOfToken = bytes.toString(CryptoJS.enc.Utf8);
         const decryptedToken = JSON.parse(stringOfToken);
 
+        //正式 ----------------------------------------------
+
         localStorage.setItem("userStatus", JSON.stringify(decryptedToken));
 
-        if (decryptedToken.groupId === "sysUser") {
-          window.location.href = `/user/${decryptedToken.staffId}`;
-        }
+        const redirectPath = [
+          "DepManager",
+          "GeneralManager",
+          "ViceGeneralManager",
+        ].includes(decryptedToken.groupId)
+          ? "/"
+          : `/user/${decryptedToken.staffId}`;
+
+        window.location.href = redirectPath;
+
+        //測試 -----------------------------------------------
+        // const tokenObject = getTokenFromLocal();
+
+        // localStorage.setItem(
+        //   "userStatus",
+        //   JSON.stringify({
+        //     depId: "2",
+        //     expiration: "2024-01-31T11:04:09.604Z",
+        //     groupId: "sysUser",
+        //     staffId: "1120401",
+        //     userName: "紀宗文",
+        //   })
+        // );
+
+        // localStorage.setItem(
+        //   "userStatus",
+        //   JSON.stringify({
+        //     depId: "2",
+        //     expiration: "2024-01-31T11:04:09.604Z",
+        //     groupId: "AssistanManager",
+        //     staffId: "1120401",
+        //     userName: "紀宗文",
+        //   })
+        // );
+
+        // const redirectPath = [
+        //   "DepManager",
+        //   "GeneralManager",
+        //   "ViceGeneralManager",
+        // ].includes(tokenObject.groupId)
+        //   ? "/"
+        //   : `/user/${tokenObject.staffId}`;
+
+        // window.location.href = redirectPath;
       } catch (error) {
         console.error(error);
       }
