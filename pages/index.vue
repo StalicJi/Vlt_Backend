@@ -77,7 +77,7 @@ import PageTitle from "~/components/element/PageTitle.vue";
 import YearOfCal from "~/components/YearOfCal.vue";
 import AllStaCard from "~/components/element/AllStatisticsCard.vue";
 import * as echarts from "echarts";
-import axios from "axios";
+import { checkPath } from "~/utils/routerControll";
 
 export default {
   components: {
@@ -88,10 +88,6 @@ export default {
     AllStaCard,
   },
 
-  setup() {
-    const router = useRouter();
-  },
-
   data() {
     return {
       ProjecBusinessNumber: 0,
@@ -100,16 +96,16 @@ export default {
       ProjectClosethecaseNumber: 0,
     };
   },
+
+  beforeMount() {
+    checkPath();
+  },
+
   mounted() {
-    // this.getUrlToken();
     this.createBarChart();
   },
 
   methods: {
-    // getUrlToken() {
-    //   const router = useRoute();
-    //   console.log(router.query.token);
-    // },
     createBarChart() {
       API.post("api/ProjectAnalysis/GetProjectData", {
         id: "All",

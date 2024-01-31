@@ -78,6 +78,7 @@ import PageTitle from "../../../components/element/PageTitle.vue";
 import YearOfCal from "../../../components/YearOfCal.vue";
 import AllStaCard from "../../../components/element/AllStatisticsCard.vue";
 import * as echarts from "echarts";
+import { checkPath } from "~/utils/routerControll";
 
 export default {
   components: {
@@ -86,10 +87,6 @@ export default {
     YearOfCal,
     PageTitle,
     AllStaCard,
-  },
-
-  setup() {
-    const router = useRouter();
   },
 
   data() {
@@ -104,6 +101,11 @@ export default {
       titleUserName: "",
     };
   },
+
+  beforeMount() {
+    checkPath();
+  },
+
   mounted() {
     this.getStaffInfo();
     this.getStaffProjectData();

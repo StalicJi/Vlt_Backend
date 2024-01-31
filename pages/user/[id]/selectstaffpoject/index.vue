@@ -61,6 +61,7 @@ import ProjectSelect from "~/components/ProjectSelect.vue";
 import PageTitle from "~/components/element/PageTitle.vue";
 import ProjectInfoCard from "~/components/element/ProjectInfoCard.vue";
 import Button from "~/components/element/Button.vue";
+import { checkPath } from "~/utils/routerControll";
 
 export default {
   components: {
@@ -69,6 +70,7 @@ export default {
     ProjectInfoCard,
     Button,
   },
+
   data() {
     return {
       pageTitle: "個人專案查詢 : ",
@@ -83,6 +85,11 @@ export default {
       projectId: "",
     };
   },
+
+  beforeMount() {
+    checkPath();
+  },
+
   mounted() {
     this.getStaffInfo();
     this.getPersonProjectStatus();

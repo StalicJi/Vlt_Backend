@@ -1,6 +1,6 @@
 <template>
-  <div class="flex-btw px-7">
-    <div class="flex">
+  <!-- <div class="flex-btw px-7"> -->
+  <!-- <div class="flex">
       <div class="header-btn">
         <VaIcon
           name="home"
@@ -28,36 +28,42 @@
       <div class="header-btn">
         <VaIcon name="refresh" size="20px" color="#fff" @click="reLoad" />
       </div>
+    </div> -->
+  <div class="flex-center justify-end px-7">
+    <div class="flex-center mr-4 text-lg">
+      <h1 v-if="token">
+        Hi, <span class="ml-2">{{ token.userName }}</span>
+      </h1>
+      <div v-else />
     </div>
-    <div class="flex-center">
-      <div class="flex-center mr-4 text-lg">
-        <h1>
-          Hi, <span class="ml-3">{{ userName }}</span>
-        </h1>
-      </div>
-      <div class="default-btn">
-        <p class="text-white text-sm">登出</p>
-      </div>
+    <div class="default-btn">
+      <p class="text-white text-sm">登出</p>
     </div>
   </div>
+  <!-- </div> -->
 </template>
 
 <script>
+import { getTokenFromLocal } from "~/utils/getToken";
+
 export default {
-  setup() {
-    const router = useRouter();
-  },
-  props: {
-    userName: {
-      type: String,
-    },
-  },
   data() {
-    return {};
+    return {
+      token: null,
+    };
+  },
+
+  mounted() {
+    this.getToken();
   },
   methods: {
-    reLoad() {
-      window.location.reload();
+    getToken() {
+      const tokenObject = getTokenFromLocal();
+      this.token = tokenObject;
+
+      // if (tokenObject.groupId === "sysUser") {
+      //   window.location.href = `/user/${tokenObject.staffId}`;
+      // }
     },
   },
 };

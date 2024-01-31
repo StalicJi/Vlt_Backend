@@ -4,7 +4,7 @@
       <div class="flex min-h-screen">
         <SideBar class="shadow-r" />
         <div class="h-100vh w-full flex flex-col bg-white">
-          <Header :userName="userName" class="h-16 shadow-btm" />
+          <Header class="h-16 shadow-btm" />
           <NuxtPage class="flex-1 top-4" />
         </div>
       </div>
@@ -28,16 +28,23 @@ export default {
       // meta: [{ name: "description", content: "My amazing site." }],
     });
   },
-  data() {
-    return {
-      decryptedToken: "",
-      userName: "",
-    };
-  },
+
+  // beforeMount() {
+  //   this.getUrlToken();
+  // },
   mounted() {
     this.getUrlToken();
   },
+
   methods: {
+    setCookie(name: string, value: any, days: any) {
+      const date = new Date();
+      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+      const expires = "expires=" + date.toUTCString();
+      document.cookie = name + "=" + value + ";" + expires + ";path=/";
+    },
+
+    //解密後將資訊存到local
     getUrlToken() {
       const key = "ji3g4rupul4";
       const tokenPart = window.location.search.substring(1);
@@ -49,10 +56,11 @@ export default {
         const stringOfToken = bytes.toString(CryptoJS.enc.Utf8);
         const decryptedToken = JSON.parse(stringOfToken);
 
-        this.decryptedToken = decryptedToken;
-        this.userName = decryptedToken.userName;
+        localStorage.setItem("userStatus", JSON.stringify(decryptedToken));
 
-        // console.log(this.userName);
+        if (decryptedToken.groupId === "sysUser") {
+          window.location.href = `/user/${decryptedToken.staffId}`;
+        }
       } catch (error) {
         console.error(error);
       }
@@ -60,38 +68,3 @@ export default {
   },
 };
 </script>
-
-<!-- <script setup lang="ts">
-import Header from "./components/Header.vue";
-import SideBar from "./components/Sidebar.vue";
-import CryptoJS from "crypto-js";
-// import { defineProps } from "vue";
-
-useHead({
-  title: "後端管理系統",
-  // meta: [{ name: "description", content: "My amazing site." }],
-});
-
-const route = useRoute();
-
-let decryptedToken = "";
-
-const getUrlToken = () => {
-  const key = "ji3g4rupul4";
-
-  const tokenPart = route.fullPath.split("?")[1];
-  const tokenArray = tokenPart.split("&");
-  const token = tokenArray[0].split("=")[1];
-
-  try {
-    const bytes = CryptoJS.AES.decrypt(token, key);
-    const stringOfToken = bytes.toString(CryptoJS.enc.Utf8);
-    decryptedToken = JSON.parse(stringOfToken);
-    console.log(decryptedToken);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-onMounted(getUrlToken);
-</script> -->

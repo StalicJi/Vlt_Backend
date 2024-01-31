@@ -109,6 +109,7 @@
 import API from "~/src/api";
 import PageTitle from "~/components/element/PageTitle";
 import Button from "~/components/element/Button.vue";
+// import { getTokenFromLocal } from "~/src/getToken";
 
 export default {
   components: {
@@ -148,6 +149,10 @@ export default {
     this.valueSingle = this.$route.query.status;
   },
 
+  beforeMount() {
+    checkPath();
+  },
+
   computed: {
     totalPages() {
       return Math.ceil(this.projects.length / this.itemsPerPage);
@@ -171,6 +176,13 @@ export default {
   },
 
   methods: {
+    // checkPath() {
+    //   const route = useRoute();
+    //   const tokenObject = getTokenFromLocal();
+    //   if (route.params.id !== tokenObject.staffId) {
+    //     window.location.href = "/404NotFound/sys404";
+    //   }
+    // },
     getProjectStatus(selectedOption, startDate, endDate) {
       this.loading = true;
       const typeMapping = {

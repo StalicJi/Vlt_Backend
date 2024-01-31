@@ -71,6 +71,8 @@
 import API from "../../src/api";
 import PageTitle from "../../components/element/PageTitle.vue";
 import Button from "../../components/element/Button.vue";
+import { checkPath } from "~/utils/routerControll";
+
 export default {
   components: {
     PageTitle,
@@ -85,6 +87,10 @@ export default {
       itemsPerPage: 10,
       value: true,
     };
+  },
+
+  beforeMount() {
+    checkPath();
   },
 
   mounted() {
