@@ -30,15 +30,16 @@
       </div>
     </div> -->
   <div class="flex-center justify-end px-7">
-    <div class="flex-center mr-4 text-lg">
+    <div class="flex-center mr-4 text-lg gap-2">
+      <VaIcon name="account_circle" size="2rem" />
       <h1 v-if="token">
         Hi, <span class="ml-2">{{ token.userName }}</span>
       </h1>
       <div v-else />
     </div>
-    <div class="default-btn">
+    <!-- <div class="default-btn">
       <p class="text-white text-sm">登出</p>
-    </div>
+    </div> -->
   </div>
   <!-- </div> -->
 </template>

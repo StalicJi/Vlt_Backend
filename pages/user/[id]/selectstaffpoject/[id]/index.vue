@@ -90,7 +90,8 @@ import PageTitle from "~/components/element/PageTitle.vue";
 import ProjectInfoCard from "~/components/element/ProjectInfoCard.vue";
 import Button from "~/components/element/Button.vue";
 import * as echarts from "echarts";
-import { checkPath } from "~/utils/routerControll";
+import { getTokenFromLocal } from "~/utils/getToken";
+// import { checkPath } from "~/utils/routerControll";
 
 export default {
   components: {
@@ -125,7 +126,7 @@ export default {
   },
 
   beforeMount() {
-    checkPath();
+    this.checkPath();
   },
 
   mounted() {
@@ -145,6 +146,19 @@ export default {
   },
 
   methods: {
+    checkPath() {
+      const route = useRoute();
+      const fullPath = route.fullPath;
+      const startIndex = fullPath.indexOf("/user/") + "/user/".length;
+      const endIndex = fullPath.indexOf("/selectstaffpoject/");
+      const userId = fullPath.substring(startIndex, endIndex);
+      // console.log(userId);
+      const tokenObject = getTokenFromLocal();
+      if (userId !== tokenObject.staffId) {
+        window.location.href = "/404NotFound";
+      }
+    },
+
     findChart() {
       const addOneDay = (date) => {
         const nextDate = new Date(date);
@@ -272,7 +286,7 @@ export default {
         Staffid: userId,
       })
         .then((response) => {
-          console.log(response);
+          // console.log(response);
           this.userName = response.data[0].name;
         })
         .catch((error) => {
