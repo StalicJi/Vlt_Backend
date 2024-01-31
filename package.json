@@ -22,7 +22,6 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
-    "@pinia/nuxt": "^0.5.1",
     "@vuestic/nuxt": "^1.0.18",
     "axios": "^1.6.3",
     "chart.js": "^4.4.1",
