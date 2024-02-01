@@ -30,35 +30,23 @@ export default {
   },
 
   mounted() {
-    this.saveTokenToLocal();
+    // this.saveTokenToLocal();
   },
 
   methods: {
     //從網址提取token
     saveTokenToLocal() {
       try {
-        const existingToken = localStorage.getItem("userStatus");
-        const route = useRoute();
-        console.log(route);
-
-        if (existingToken === null) {
-          const tokenPart = window.location.search.substring(1);
-          const tokenArray = tokenPart.split("&");
-          const token = tokenArray[0].split("=")[1];
-          localStorage.setItem("userStatus", token);
-        }
-
-        const tokenObject = getTokenFromLocal();
-        // console.log(tokenObject);
-
-        if (
-          tokenObject!.groupId !== "DepManager" &&
-          tokenObject!.groupId !== "GeneralManager" &&
-          tokenObject!.groupId !== "ViceGeneralManager" &&
-          route.path === "/"
-        ) {
-          window.location.href = `/user/${tokenObject!.staffId}`;
-        }
+        // const tokenObject = getTokenFromLocal();
+        // const route = useRoute();
+        // if (
+        //   tokenObject!.groupId !== "DepManager" &&
+        //   tokenObject!.groupId !== "GeneralManager" &&
+        //   tokenObject!.groupId !== "ViceGeneralManager" &&
+        //   route.path === "/"
+        // ) {
+        //   window.location.href = `/user/${tokenObject!.staffId}`;
+        // }
       } catch (error) {
         console.log(error);
       }

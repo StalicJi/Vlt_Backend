@@ -7,32 +7,40 @@ export function getTokenFromLocal() {
   const storedToken = localStorage.getItem("userStatus");
 
   try {
-    const bytes = CryptoJS.AES.decrypt(storedToken, key);
-    const stringOfToken = bytes.toString(CryptoJS.enc.Utf8);
-    const decryptedToken = JSON.parse(stringOfToken);
+    if (storedToken === null) {
+      const tokenPart = window.location.search.substring(1);
 
-    if (decryptedToken) {
-      //正式
-      token = decryptedToken;
+      const tokenArray = tokenPart.split("&");
+      const token = tokenArray[0].split("=")[1];
+      localStorage.setItem("userStatus", token);
+    } else {
+      const bytes = CryptoJS.AES.decrypt(storedToken, key);
+      const stringOfToken = bytes.toString(CryptoJS.enc.Utf8);
+      const decryptedToken = JSON.parse(stringOfToken);
 
-      //測試
-      // token = {
-      //   depId: "2",
-      //   expiration: "2024-01-31T11:04:09.604Z",
-      //   groupId: "DepManager",
-      //   staffId: "1120401",
-      //   userName: "紀宗文",
-      // };
-      // token = {
-      //   depId: "2",
-      //   expiration: "2024-01-31T11:04:09.604Z",
-      //   groupId: "GeneralManager",
-      //   staffId: "1120401",
-      //   userName: "紀宗文",
-      // };
+      if (decryptedToken) {
+        //正式
+        // token = decryptedToken;
+
+        //測試
+        token = {
+          depId: "2",
+          expiration: "2024-01-31T11:04:09.604Z",
+          groupId: "DepManager",
+          staffId: "1120401",
+          userName: "紀宗文",
+        };
+        // token = {
+        //   depId: "2",
+        //   expiration: "2024-01-31T11:04:09.604Z",
+        //   groupId: "GeneralManager",
+        //   staffId: "1120401",
+        //   userName: "紀宗文",
+        // };
+      }
+      console.log(token);
+      return token;
     }
-    console.log(token);
-    return token;
   } catch (error) {
     console.error(error);
   }
