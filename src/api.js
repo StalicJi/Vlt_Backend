@@ -7,6 +7,5 @@ export default axios.create({
 
   headers: {
     "Content-Type": "application/json",
-    Authorization: "Bearer your_access_token", // 如果需要身份驗證，添加Authorization
   },
 });

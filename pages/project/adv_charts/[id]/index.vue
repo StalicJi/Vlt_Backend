@@ -2,14 +2,6 @@
   <div class="p-7 flex flex-col">
     <div class="flex-btw">
       <PageTitle icon-name="search" :page-title="projectTitle" />
-      <!-- <div
-        class="default-btn bg-green-700"
-        :projectId="this.$route.params.id"
-        @click="openDialog"
-      >
-        <VaIcon name="ios_share" size="16px" color="#fff" />
-        <p class="text-white ml-1 text-sm">EXCEL</p>
-      </div> -->
     </div>
     <div class="flex flex-col h-full">
       <div class="grid grid-flow-col grid-cols-6 mt-8 gap-4 row-span-1">

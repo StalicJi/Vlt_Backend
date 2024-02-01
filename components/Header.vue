@@ -37,9 +37,6 @@
       </h1>
       <div v-else />
     </div>
-    <!-- <div class="default-btn">
-      <p class="text-white text-sm">登出</p>
-    </div> -->
   </div>
   <!-- </div> -->
 </template>
@@ -61,10 +58,6 @@ export default {
     getIdentify() {
       const tokenObject = getTokenFromLocal();
       this.token = tokenObject;
-
-      // if (tokenObject.groupId === "sysUser") {
-      //   window.location.href = `/user/${tokenObject.staffId}`;
-      // }
     },
   },
 };

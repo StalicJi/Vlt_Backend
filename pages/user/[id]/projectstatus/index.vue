@@ -109,13 +109,13 @@
 import API from "~/src/api";
 import PageTitle from "~/components/element/PageTitle";
 import Button from "~/components/element/Button.vue";
-// import { getTokenFromLocal } from "~/src/getToken";
 
 export default {
   components: {
     PageTitle,
     Button,
   },
+
   data() {
     const date = new Date();
     const year = date.getFullYear();
@@ -176,13 +176,6 @@ export default {
   },
 
   methods: {
-    // checkPath() {
-    //   const route = useRoute();
-    //   const tokenObject = getTokenFromLocal();
-    //   if (route.params.id !== tokenObject.staffId) {
-    //     window.location.href = "/404NotFound/sys404";
-    //   }
-    // },
     getProjectStatus(selectedOption, startDate, endDate) {
       this.loading = true;
       const typeMapping = {

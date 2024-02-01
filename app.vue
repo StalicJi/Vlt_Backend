@@ -49,7 +49,7 @@ export default {
           window.location.href = `/user/${tokenObject!.staffId}`;
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     },
   },

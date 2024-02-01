@@ -72,7 +72,6 @@ import API from "../../src/api";
 import PageTitle from "../../components/element/PageTitle.vue";
 import Button from "../../components/element/Button.vue";
 import { getTokenFromLocal } from "~/utils/getToken";
-// import { checkPath } from "~/utils/routerControll";
 
 export default {
   components: {
@@ -88,10 +87,6 @@ export default {
       itemsPerPage: 10,
       value: true,
     };
-  },
-
-  beforeMount() {
-    // checkPath();
   },
 
   mounted() {
@@ -124,28 +119,34 @@ export default {
         .then((response) => {
           const tokenObject = getTokenFromLocal();
 
-          if (tokenObject.groupId === "DepManager") {
-            //部門經理條件
-            setTimeout(() => {
-              this.users = response.data
-                .filter((user) => user.dep_id === tokenObject.depId)
-                .sort((a, b) => b.staff_duty - a.staff_duty);
-              this.loading = false;
-            }, 1000);
-          } else if (
-            ["sysUser", "Cashier", "Supervisor", "AssistanManager"].includes(
-              tokenObject.groupId
-            )
+          //最高權限-老闆
+          if (
+            tokenObject.staffId === "1010101" &&
+            tokenObject.userName === "李國維"
           ) {
-            //一班員工條件
-            window.location.href = "/404NotFound";
-          } else {
             setTimeout(() => {
               this.users = response.data.sort((a, b) => {
                 return b.staff_duty - a.staff_duty;
               });
               this.loading = false;
             }, 1000);
+
+            //部門經理條件
+          } else if (tokenObject.groupId === "DepManager") {
+            setTimeout(() => {
+              this.users = response.data
+                .filter((user) => user.dep_id === tokenObject.depId)
+                .sort((a, b) => b.staff_duty - a.staff_duty);
+              this.loading = false;
+            }, 1000);
+
+            //一班員工條件
+          } else if (
+            ["sysUser", "Cashier", "Supervisor", "AssistanManager"].includes(
+              tokenObject.groupId
+            )
+          ) {
+            window.location.href = "/404NotFound";
           }
         })
         .catch((error) => {

@@ -146,6 +146,8 @@ export default {
   },
 
   computed: {
+    // 自動生成頁碼
+
     totalPages() {
       return Math.ceil(this.projects.length / this.itemsPerPage);
     },

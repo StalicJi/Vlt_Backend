@@ -343,6 +343,7 @@ export default {
       const option = {
         tooltip: {
           show: true,
+          formatter: "{c} 小時",
         },
         legend: {
           type: "scroll",

@@ -82,6 +82,7 @@ export default {
   },
   methods: {
     handleItemClick(route) {
+      // 是否開新視窗
       if (route.startsWith("http")) {
         // window.open(route, "_blank");
         window.location.href = route;
@@ -89,6 +90,8 @@ export default {
         this.$router.push(route);
       }
     },
+
+    // 判斷專案統計首頁網址
     initSidebar() {
       const tokenObject = getTokenFromLocal();
       const router =

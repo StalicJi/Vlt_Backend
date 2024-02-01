@@ -170,6 +170,7 @@ export default {
           axisPointer: {
             type: "line",
           },
+          formatter: "{c} 件",
         },
         xAxis: {
           type: "category",

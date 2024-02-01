@@ -3,9 +3,10 @@ import { useRoute } from "vue-router";
 
 export function checkPath() {
   const route = useRoute();
-  //   console.log(route);
+
   const tokenObject = getTokenFromLocal();
 
+  // 判斷是否攥改網址
   if (tokenObject.groupId === "sysUser" && route.fullPath === "/") {
     window.location.href = "/404NotFound";
     // console.log(test_1);
