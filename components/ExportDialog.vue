@@ -67,7 +67,7 @@ export default {
 
     async getProjectTitle(projectId) {
       return new Promise((resolve, reject) => {
-        API.post("api/ProjectAnalysis/ProjectSelector", {
+        API.post("ProjectAnalysis/ProjectSelector", {
           id: "All",
         })
           .then((response) => {
@@ -110,7 +110,7 @@ export default {
       formData.append("enddate", endDate);
 
       API.post(
-        "api/ProjectAnalysis/DownloadindividualProjectInformationExcel",
+        "ProjectAnalysis/DownloadindividualProjectInformationExcel",
         formData,
         {
           responseType: "blob",
@@ -144,7 +144,7 @@ export default {
       formData.append("enddate", endDate);
 
       API.post(
-        "api/ProjectAnalysis/DownloadindividualProjectInformationExcel",
+        "ProjectAnalysis/DownloadindividualProjectInformationExcel",
         formData,
         {
           responseType: "blob",
@@ -172,7 +172,7 @@ export default {
 
     async getProjectSTime(projectId) {
       return new Promise((resolve, reject) => {
-        API.post("api/ProjectAnalysis/GetPjStartTime", {
+        API.post("ProjectAnalysis/GetPjStartTime", {
           id: projectId,
         })
           .then((response) => {

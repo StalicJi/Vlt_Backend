@@ -186,7 +186,7 @@ export default {
       };
 
       const selectedType = typeMapping[selectedOption];
-      API.post("api/ProjectAnalysis/GetDetailProjectData", {
+      API.post("ProjectAnalysis/GetDetailProjectData", {
         id: this.$route.params.id,
         type: selectedType,
         startdate: startDate,
@@ -216,7 +216,7 @@ export default {
     },
 
     getStaffInfo() {
-      API.post("/api/ProjectAnalysis/PostStaffData", {
+      API.post("ProjectAnalysis/PostStaffData", {
         Staffid: this.$route.params.id,
       })
         .then((response) => {

@@ -6,11 +6,11 @@ export function getTokenFromLocal() {
   let token = null;
   const tokenPart = window.location.search.substring(1);
   const tokenArray = tokenPart.split("&");
-  token = tokenArray[0].split("=")[1];
+  token = tokenArray[0].split("token=")[1];
   let storedToken = localStorage.getItem("userStatus");
 
   //判斷Url是否攜帶Token
-  if (token != "undefined") {
+  if (typeof token != "undefined") {
     localStorage.setItem("userStatus", token);
     storedToken = token;
     needDecrypt = true;

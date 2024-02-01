@@ -93,7 +93,7 @@ export default {
 
   methods: {
     getProjectInfo(project_id) {
-      API.post("api/ProjectAnalysis/GetindividualProjectInformation", {
+      API.post("ProjectAnalysis/GetindividualProjectInformation", {
         id: project_id,
       })
         .then((response) => {
@@ -122,12 +122,9 @@ export default {
     },
 
     getProjectTeam(project_id) {
-      API.post(
-        "api/ProjectAnalysis/GetindividualProjectInformationPersonList",
-        {
-          id: project_id,
-        }
-      )
+      API.post("ProjectAnalysis/GetindividualProjectInformationPersonList", {
+        id: project_id,
+      })
         .then((response) => {
           if (response.status === 204) {
             this.users = [];

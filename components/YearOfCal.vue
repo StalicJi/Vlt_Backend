@@ -137,7 +137,7 @@ export default {
 
     creatinitYBarChart(start, end) {
       if (this.$route.path === "/") {
-        API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanel", {
+        API.post("ProjectAnalysis/GetUnfixedInstrumentPanel", {
           id: "All",
           startdate: start,
           enddate: end,
@@ -187,7 +187,7 @@ export default {
           })
           .catch((error) => console.error(error));
       } else if (this.$route.path === `/user/${this.id}`) {
-        API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanelPerson", {
+        API.post("ProjectAnalysis/GetUnfixedInstrumentPanelPerson", {
           id: this.id,
           startdate: start,
           enddate: end,
@@ -228,7 +228,7 @@ export default {
 
     creatinitPieChart(start, end) {
       if (this.$route.path === "/") {
-        API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanel", {
+        API.post("ProjectAnalysis/GetUnfixedInstrumentPanel", {
           id: "All",
           startdate: start,
           enddate: end,
@@ -250,7 +250,7 @@ export default {
           })
           .catch((error) => console.log(error));
       } else if (this.$route.path === `/user/${this.id}`) {
-        API.post("api/ProjectAnalysis/GetUnfixedInstrumentPanelPerson", {
+        API.post("ProjectAnalysis/GetUnfixedInstrumentPanelPerson", {
           id: this.id,
           startdate: start,
           enddate: end,

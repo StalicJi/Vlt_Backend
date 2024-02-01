@@ -113,7 +113,7 @@ export default {
 
   methods: {
     getAllProjectData() {
-      API.post("api/ProjectAnalysis/PostStaffData", {
+      API.post("ProjectAnalysis/PostStaffData", {
         Staffid: "All",
       })
         .then((response) => {

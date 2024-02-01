@@ -69,7 +69,7 @@ export default {
 
   methods: {
     getAllSelect() {
-      API.post("api/ProjectAnalysis/ProjectSelector", {
+      API.post("ProjectAnalysis/ProjectSelector", {
         id: "All",
       })
         .then((response) => {
@@ -88,7 +88,7 @@ export default {
     },
 
     getIdSelect(userid) {
-      API.post("api/ProjectAnalysis/ProjectSelector", {
+      API.post("ProjectAnalysis/ProjectSelector", {
         id: userid,
       })
         .then((response) => {

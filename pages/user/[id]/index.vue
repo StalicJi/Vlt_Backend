@@ -113,7 +113,7 @@ export default {
 
   methods: {
     getStaffInfo() {
-      API.post("/api/ProjectAnalysis/PostStaffData", {
+      API.post("ProjectAnalysis/PostStaffData", {
         Staffid: this.$route.params.id,
       })
         .then((response) => {
@@ -138,7 +138,7 @@ export default {
     },
 
     getStaffProjectData() {
-      API.post("/api/ProjectAnalysis/GetProjectData", {
+      API.post("ProjectAnalysis/GetProjectData", {
         id: this.$route.params.id,
       })
         .then((response) => {

@@ -246,7 +246,7 @@ export default {
       formData.append("enddate", selectETime);
 
       API.post(
-        "api/ProjectAnalysis/DownloadindividualProjectInformationExcel",
+        "ProjectAnalysis/DownloadindividualProjectInformationExcel",
         formData,
         {
           responseType: "blob",
@@ -271,7 +271,7 @@ export default {
     },
 
     getProjectInfo(project_id) {
-      API.post("api/ProjectAnalysis/GetindividualProjectInformation", {
+      API.post("ProjectAnalysis/GetindividualProjectInformation", {
         id: project_id,
       })
         .then((response) => {
@@ -301,7 +301,7 @@ export default {
     },
 
     getProjectTitle() {
-      API.post("api/ProjectAnalysis/ProjectSelector", {
+      API.post("ProjectAnalysis/ProjectSelector", {
         id: "All",
       })
         .then((response) => {
@@ -317,7 +317,7 @@ export default {
     },
 
     getProjectSTime() {
-      API.post("api/ProjectAnalysis/GetPjStartTime", {
+      API.post("ProjectAnalysis/GetPjStartTime", {
         id: this.$route.params.id,
       })
         .then((response) => {
@@ -346,7 +346,7 @@ export default {
     },
 
     createAreaChart(projectId, startDate, endDate) {
-      API.post("api/ProjectAnalysis/GetareaChart", {
+      API.post("ProjectAnalysis/GetareaChart", {
         id: projectId,
         staffid: "All",
         startdate: startDate,
@@ -362,7 +362,7 @@ export default {
     },
 
     createWorkPieChart(projectId, startDate, endDate) {
-      API.post("api/ProjectAnalysis/GettypeChart", {
+      API.post("ProjectAnalysis/GettypeChart", {
         id: projectId,
         staffid: "All",
         startdate: startDate,
@@ -383,7 +383,7 @@ export default {
     },
 
     createEmploPieChart(projectId, startDate, endDate) {
-      API.post("api/ProjectAnalysis/GetpersonHourChart", {
+      API.post("ProjectAnalysis/GetpersonHourChart", {
         id: projectId,
         startdate: startDate,
         enddate: endDate,

@@ -107,7 +107,7 @@ export default {
 
   methods: {
     createBarChart() {
-      API.post("api/ProjectAnalysis/GetProjectData", {
+      API.post("ProjectAnalysis/GetProjectData", {
         id: "All",
       })
         .then((response) => {

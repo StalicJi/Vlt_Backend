@@ -180,7 +180,7 @@ export default {
       };
 
       const selectedType = typeMapping[selectedOption];
-      API.post("api/ProjectAnalysis/GetDetailProjectData", {
+      API.post("ProjectAnalysis/GetDetailProjectData", {
         id: "All",
         type: selectedType,
         startdate: startDate,
@@ -217,7 +217,7 @@ export default {
         formData.append("id", projectId);
         formData.append("staffid", "All");
 
-        API.post("/api/ProjectAnalysis/DownloadAllProjectDataExcel", formData, {
+        API.post("ProjectAnalysis/DownloadAllProjectDataExcel", formData, {
           responseType: "blob",
           headers: {
             "Content-Type": "application/vnd.ms-excel;charset=utf-8",
