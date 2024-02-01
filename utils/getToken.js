@@ -20,16 +20,16 @@ export function getTokenFromLocal() {
 
       if (decryptedToken) {
         //正式
-        // token = decryptedToken;
+        token = decryptedToken;
 
         //測試
-        token = {
-          depId: "2",
-          expiration: "2024-01-31T11:04:09.604Z",
-          groupId: "DepManager",
-          staffId: "1120401",
-          userName: "紀宗文",
-        };
+        // token = {
+        //   depId: "2",
+        //   expiration: "2024-01-31T11:04:09.604Z",
+        //   groupId: "DepManager",
+        //   staffId: "1120401",
+        //   userName: "紀宗文",
+        // };
         // token = {
         //   depId: "2",
         //   expiration: "2024-01-31T11:04:09.604Z",

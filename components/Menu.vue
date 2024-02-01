@@ -77,7 +77,7 @@ export default {
       items: [],
     };
   },
-  mounted() {
+  beforeMount() {
     this.initSidebar();
   },
   methods: {

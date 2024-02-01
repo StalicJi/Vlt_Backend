@@ -30,23 +30,24 @@ export default {
   },
 
   mounted() {
-    // this.saveTokenToLocal();
+    this.saveTokenToLocal();
   },
 
   methods: {
     //從網址提取token
     saveTokenToLocal() {
       try {
-        // const tokenObject = getTokenFromLocal();
-        // const route = useRoute();
-        // if (
-        //   tokenObject!.groupId !== "DepManager" &&
-        //   tokenObject!.groupId !== "GeneralManager" &&
-        //   tokenObject!.groupId !== "ViceGeneralManager" &&
-        //   route.path === "/"
-        // ) {
-        //   window.location.href = `/user/${tokenObject!.staffId}`;
-        // }
+        const tokenObject = getTokenFromLocal();
+        const route = useRoute();
+
+        if (
+          tokenObject!.groupId !== "DepManager" &&
+          tokenObject!.groupId !== "GeneralManager" &&
+          tokenObject!.groupId !== "ViceGeneralManager" &&
+          route.path === "/"
+        ) {
+          window.location.href = `/user/${tokenObject!.staffId}`;
+        }
       } catch (error) {
         console.log(error);
       }

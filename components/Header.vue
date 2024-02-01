@@ -54,7 +54,7 @@ export default {
     };
   },
 
-  mounted() {
+  beforeMount() {
     this.getIdentify();
   },
   methods: {
