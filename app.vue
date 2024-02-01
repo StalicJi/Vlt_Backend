@@ -24,7 +24,7 @@ export default {
   },
   setup() {
     useHead({
-      title: "後端管理系統",
+      title: "後端管理系統-專案統計",
       // meta: [{ name: "description", content: "My amazing site." }],
     });
   },

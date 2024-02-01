@@ -119,28 +119,43 @@ export default {
         .then((response) => {
           const tokenObject = getTokenFromLocal();
 
-          //最高權限-老闆
+          //排序邏輯
+          const sortUsersByStaffDuty = (users) => {
+            return users.sort((a, b) => b.staff_duty - a.staff_duty);
+          };
+
+          // 老闆權限
           if (
             tokenObject.staffId === "1010101" &&
             tokenObject.userName === "李國維"
           ) {
             setTimeout(() => {
-              this.users = response.data.sort((a, b) => {
-                return b.staff_duty - a.staff_duty;
-              });
+              this.users = sortUsersByStaffDuty(response.data);
               this.loading = false;
             }, 1000);
 
-            //部門經理條件
+            // 總/副總權限
+          } else if (
+            tokenObject.groupId === "GeneralManager" ||
+            tokenObject.groupId === "ViceGeneralManager"
+          ) {
+            setTimeout(() => {
+              this.users = sortUsersByStaffDuty(response.data);
+              this.loading = false;
+            }, 1000);
+
+            // 部門經理權限
           } else if (tokenObject.groupId === "DepManager") {
             setTimeout(() => {
-              this.users = response.data
-                .filter((user) => user.dep_id === tokenObject.depId)
-                .sort((a, b) => b.staff_duty - a.staff_duty);
+              this.users = sortUsersByStaffDuty(
+                response.data.filter(
+                  (user) => user.dep_id === tokenObject.depId
+                )
+              );
               this.loading = false;
             }, 1000);
 
-            //一班員工條件
+            // 經理級以下權限
           } else if (
             ["sysUser", "Cashier", "Supervisor", "AssistanManager"].includes(
               tokenObject.groupId
