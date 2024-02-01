@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { getTokenFromLocal } from "~/utils/getToken"; // 根据你的实际路径修改导入路径
+import { getTokenFromLocal } from "~/utils/getToken";
 
 export default {
   data() {

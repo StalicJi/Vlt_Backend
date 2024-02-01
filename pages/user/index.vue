@@ -72,7 +72,7 @@ import API from "../../src/api";
 import PageTitle from "../../components/element/PageTitle.vue";
 import Button from "../../components/element/Button.vue";
 import { getTokenFromLocal } from "~/utils/getToken";
-import { checkPath } from "~/utils/routerControll";
+// import { checkPath } from "~/utils/routerControll";
 
 export default {
   components: {
@@ -91,7 +91,7 @@ export default {
   },
 
   beforeMount() {
-    checkPath();
+    // checkPath();
   },
 
   mounted() {

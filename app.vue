@@ -15,7 +15,6 @@
 <script lang="ts">
 import Header from "./components/Header.vue";
 import SideBar from "./components/Sidebar.vue";
-import CryptoJS from "crypto-js";
 import { getTokenFromLocal } from "~/utils/getToken";
 
 export default {
@@ -31,79 +30,37 @@ export default {
   },
 
   mounted() {
-    this.getUrlToken();
+    this.saveTokenToLocal();
   },
 
   methods: {
-    setCookie(name: string, value: any, days: any) {
-      const date = new Date();
-      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-      const expires = "expires=" + date.toUTCString();
-      document.cookie = name + "=" + value + ";" + expires + ";path=/";
-    },
-
-    //解密後將資訊存到local
-    getUrlToken() {
-      const key = "ji3g4rupul4";
-      const tokenPart = window.location.search.substring(1);
-      const tokenArray = tokenPart.split("&");
-      const token = tokenArray[0].split("=")[1];
-
+    //從網址提取token
+    saveTokenToLocal() {
       try {
-        const bytes = CryptoJS.AES.decrypt(token, key);
-        const stringOfToken = bytes.toString(CryptoJS.enc.Utf8);
-        const decryptedToken = JSON.parse(stringOfToken);
+        const existingToken = localStorage.getItem("userStatus");
+        const route = useRoute();
+        console.log(route);
 
-        //正式 ----------------------------------------------
+        if (existingToken === null) {
+          const tokenPart = window.location.search.substring(1);
+          const tokenArray = tokenPart.split("&");
+          const token = tokenArray[0].split("=")[1];
+          localStorage.setItem("userStatus", token);
+        }
 
-        localStorage.setItem("userStatus", JSON.stringify(decryptedToken));
+        const tokenObject = getTokenFromLocal();
+        // console.log(tokenObject);
 
-        const redirectPath = [
-          "DepManager",
-          "GeneralManager",
-          "ViceGeneralManager",
-        ].includes(decryptedToken.groupId)
-          ? "/"
-          : `/user/${decryptedToken.staffId}`;
-
-        window.location.href = redirectPath;
-
-        //測試 -----------------------------------------------
-        // const tokenObject = getTokenFromLocal();
-
-        // localStorage.setItem(
-        //   "userStatus",
-        //   JSON.stringify({
-        //     depId: "2",
-        //     expiration: "2024-01-31T11:04:09.604Z",
-        //     groupId: "sysUser",
-        //     staffId: "1120401",
-        //     userName: "紀宗文",
-        //   })
-        // );
-
-        // localStorage.setItem(
-        //   "userStatus",
-        //   JSON.stringify({
-        //     depId: "2",
-        //     expiration: "2024-01-31T11:04:09.604Z",
-        //     groupId: "AssistanManager",
-        //     staffId: "1120401",
-        //     userName: "紀宗文",
-        //   })
-        // );
-
-        // const redirectPath = [
-        //   "DepManager",
-        //   "GeneralManager",
-        //   "ViceGeneralManager",
-        // ].includes(tokenObject.groupId)
-        //   ? "/"
-        //   : `/user/${tokenObject.staffId}`;
-
-        // window.location.href = redirectPath;
+        if (
+          tokenObject!.groupId !== "DepManager" &&
+          tokenObject!.groupId !== "GeneralManager" &&
+          tokenObject!.groupId !== "ViceGeneralManager" &&
+          route.path === "/"
+        ) {
+          window.location.href = `/user/${tokenObject!.staffId}`;
+        }
       } catch (error) {
-        console.error(error);
+        console.log(error);
       }
     },
   },

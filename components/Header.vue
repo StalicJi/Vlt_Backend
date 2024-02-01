@@ -55,10 +55,10 @@ export default {
   },
 
   mounted() {
-    this.getToken();
+    this.getIdentify();
   },
   methods: {
-    getToken() {
+    getIdentify() {
       const tokenObject = getTokenFromLocal();
       this.token = tokenObject;
 

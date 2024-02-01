@@ -3,7 +3,7 @@ import { useRoute } from "vue-router";
 
 export function checkPath() {
   const route = useRoute();
-  console.log(route);
+  //   console.log(route);
   const tokenObject = getTokenFromLocal();
 
   if (tokenObject.groupId === "sysUser" && route.fullPath === "/") {
