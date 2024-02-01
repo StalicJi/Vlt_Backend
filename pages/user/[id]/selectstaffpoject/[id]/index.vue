@@ -151,9 +151,14 @@ export default {
       const startIndex = fullPath.indexOf("/user/") + "/user/".length;
       const endIndex = fullPath.indexOf("/selectstaffpoject/");
       const userId = fullPath.substring(startIndex, endIndex);
-      // console.log(userId);
       const tokenObject = getTokenFromLocal();
-      if (userId !== tokenObject.staffId) {
+
+      if (
+        userId !== tokenObject.staffId &&
+        !["DepManager", "GeneralManager", "ViceGeneralManager"].includes(
+          tokenObject.groupId
+        )
+      ) {
         window.location.href = "/404NotFound";
       }
     },

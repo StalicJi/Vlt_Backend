@@ -45,14 +45,15 @@ export function getTokenFromLocal() {
           //   expiration: "2024-01-31T11:04:09.604Z",
           //   groupId: "DepManager",
           //   staffId: "1120401",
-          //   userName: "紀宗文",
+          //   userName: "部門經理",
           // };
+
           // token = {
           //   depId: "2",
           //   expiration: "2024-01-31T11:04:09.604Z",
           //   groupId: "GeneralManager",
-          //   staffId: "1120401",
-          //   userName: "紀宗文",
+          //   staffId: "1010101",
+          //   userName: "李國維",
           // };
         }
       }

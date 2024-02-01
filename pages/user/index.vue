@@ -124,18 +124,8 @@ export default {
             return users.sort((a, b) => b.staff_duty - a.staff_duty);
           };
 
-          // 老闆權限
+          // 總/副總權限
           if (
-            tokenObject.staffId === "1010101" &&
-            tokenObject.userName === "李國維"
-          ) {
-            setTimeout(() => {
-              this.users = sortUsersByStaffDuty(response.data);
-              this.loading = false;
-            }, 1000);
-
-            // 總/副總權限
-          } else if (
             tokenObject.groupId === "GeneralManager" ||
             tokenObject.groupId === "ViceGeneralManager"
           ) {
