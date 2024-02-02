@@ -39,7 +39,7 @@ export default {
       try {
         const tokenObject = getTokenFromLocal();
         const route = useRoute();
-        console.log(route);
+        // console.log(route);
 
         if (
           tokenObject!.groupId !== "DepManager" &&
