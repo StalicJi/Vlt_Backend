@@ -237,7 +237,7 @@ export default {
         formData.append("id", projectId);
         formData.append("staffid", this.$route.params.id);
 
-        API.post("/api/ProjectAnalysis/DownloadAllProjectDataExcel", formData, {
+        API.post("ProjectAnalysis/DownloadAllProjectDataExcel", formData, {
           responseType: "blob",
           headers: {
             "Content-Type": "application/vnd.ms-excel;charset=utf-8",

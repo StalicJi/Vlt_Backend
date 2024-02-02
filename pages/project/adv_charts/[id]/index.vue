@@ -183,6 +183,11 @@ export default {
         return;
       }
 
+      if (startISOString > endISOString) {
+        alert(`起始時間應早於或等於最後時間`);
+        return;
+      }
+
       this.createAreaChart(this.$route.params.id, startISOString, endISOString);
       this.createWorkPieChart(
         this.$route.params.id,
