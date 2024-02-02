@@ -31,7 +31,7 @@ export default {
       this.token = tokenObject;
     },
     goHomPage() {
-      window.location.href = `/user/${this.token.staffId}`;
+      window.location.href = `/PjChart/user/${this.token.staffId}`;
     },
   },
 };

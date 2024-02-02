@@ -144,7 +144,7 @@ export default {
     },
 
     goAdvCharts(pj_id) {
-      window.location.href = `/project/adv_charts/${pj_id}`;
+      window.location.href = `/PjChart/project/adv_charts/${pj_id}`;
     },
   },
 };

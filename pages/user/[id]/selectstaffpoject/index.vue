@@ -165,7 +165,7 @@ export default {
 
     goAdvCharts(pj_id) {
       //should reload next page to get params
-      window.location.href = `/user/${this.$route.params.id}/selectstaffpoject/${pj_id}`;
+      window.location.href = `/PjChart/user/${this.$route.params.id}/selectstaffpoject/${pj_id}`;
     },
   },
 };

@@ -39,6 +39,7 @@ export default {
       try {
         const tokenObject = getTokenFromLocal();
         const route = useRoute();
+        console.log(route);
 
         if (
           tokenObject!.groupId !== "DepManager" &&
@@ -46,7 +47,7 @@ export default {
           tokenObject!.groupId !== "ViceGeneralManager" &&
           route.path === "/"
         ) {
-          window.location.href = `/user/${tokenObject!.staffId}`;
+          window.location.href = `/PjChart/user/${tokenObject!.staffId}`;
         }
       } catch (error) {
         console.error(error);

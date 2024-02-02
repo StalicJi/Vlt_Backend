@@ -151,7 +151,7 @@ export default {
               tokenObject.groupId
             )
           ) {
-            window.location.href = "/404NotFound";
+            window.location.href = "/PjChart/404NotFound";
           }
         })
         .catch((error) => {

@@ -16,4 +16,7 @@ export default defineNuxtConfig({
       // Config here
     },
   },
+  app: {
+    baseURL: "/PjChart",
+  },
 });
