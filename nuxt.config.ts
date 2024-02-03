@@ -16,6 +16,4 @@ export default defineNuxtConfig({
       // Config here
     },
   },
-
-  plugins: [{ src: "~/plugins/jquery", mode: "client" }],
 });

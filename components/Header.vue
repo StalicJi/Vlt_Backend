@@ -30,18 +30,13 @@
       </div>
     </div>
     <div class="flex-center">
-      <div class="w-40 flex-center mr-2">
-        <div>
-          <img
-            src="../public/images/man.png"
-            class="object-cover w-8 h-8 rounded-full mr-2"
-          />
-        </div>
-        <h1>Hi, 傑森史坦森</h1>
+      <div class="flex-center mr-4 text-lg">
+        <h1>
+          Hi, <span class="ml-2">{{ userName }}</span>
+        </h1>
       </div>
       <div class="default-btn">
-        <VaIcon name="logout" size="16px" color="#fff" />
-        <p class="text-white ml-1 text-sm">登出</p>
+        <p class="text-white text-sm">登出</p>
       </div>
     </div>
   </div>
@@ -51,6 +46,14 @@
 export default {
   setup() {
     const router = useRouter();
+  },
+  props: {
+    userName: {
+      type: String,
+    },
+  },
+  data() {
+    return {};
   },
   methods: {
     reLoad() {
