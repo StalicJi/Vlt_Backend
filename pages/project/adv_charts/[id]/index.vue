@@ -29,26 +29,37 @@
       </div>
 
       <div class="my-4 border-t border-gray-300 flex-1 flex flex-col">
-        <div class="flex gap-4 pt-4 w-[45rem]">
-          <VaDateInput
-            id="datetest"
-            background="#fff"
-            color="info"
-            placeholder="請選擇起始日"
-            v-model="startdate"
-          />
-          <VaDateInput
-            background="#fff"
-            color="info"
-            placeholder="請選擇結束日"
-            v-model="enddate"
-          />
-          <Button buttonText="查詢" @click="findChart" />
-          <div
-            class="bg-gray-200 flex-center px-4 py-2 rounded-md text-white cursor-not-allowed text-sm exportBtn"
-            @click="exportExcel"
-          >
-            <span>匯出</span>
+        <div class="flex items-center">
+          <div>
+            <div class="py-2 text-rose-500">
+              <p>
+                立案日期: {{ projectSTime }} / 最後資料時間: {{ projectETime }}
+                ----**(請介於兩者之間)**
+              </p>
+            </div>
+            <div class="flex gap-4 w-[45rem]">
+              <VaDateInput
+                id="datetest"
+                background="#fff"
+                color="info"
+                placeholder="請選擇起始日"
+                v-model="startdate"
+              />
+
+              <VaDateInput
+                background="#fff"
+                color="info"
+                placeholder="請選擇結束日"
+                v-model="enddate"
+              />
+              <Button buttonText="查詢" @click="findChart" />
+              <div
+                class="bg-gray-200 flex-center px-4 py-2 rounded-md text-white cursor-not-allowed text-sm exportBtn"
+                @click="exportExcel"
+              >
+                <span>匯出</span>
+              </div>
+            </div>
           </div>
         </div>
         <div class="flex gap-4 mt-4">
@@ -174,17 +185,17 @@ export default {
       const endTime = this.projectETime.split("T")[0];
 
       if (startISOString < startTime) {
-        alert(`起始時間應晚於或等於 ${startTime}`);
+        alert(`起始時間選擇 **不得早於** 立案日期 ${startTime}`);
         return;
       }
 
       if (endISOString > endTime) {
-        alert(`結束時間應早於或等於 ${endTime}`);
+        alert(`最後資料時間選擇 **應早於或等於** ${endTime}`);
         return;
       }
 
       if (startISOString > endISOString) {
-        alert(`起始時間應早於或等於最後時間`);
+        alert(`立案日期 **應早於或等於** 最後資料時間`);
         return;
       }
 
@@ -326,10 +337,10 @@ export default {
         id: this.$route.params.id,
       })
         .then((response) => {
-          this.projectSTime = response.data.pjStartDate;
-          this.projectETime = response.data.pjEndDate;
-          this.startdate = this.projectSTime.split("T")[0];
-          this.enddate = this.projectETime.split("T")[0];
+          this.projectSTime = response.data.pjStartDate.split("T")[0];
+          this.projectETime = response.data.pjEndDate.split("T")[0];
+          this.startdate = this.projectSTime;
+          this.enddate = this.projectETime;
 
           this.createAreaChart(
             this.$route.params.id,

@@ -1,7 +1,7 @@
 <template>
   <div class="p-7">
     <div>
-      <PageTitle icon-name="search" page-title="專案各別查詢" />
+      <PageTitle icon-name="search" page-title="專案查詢" />
       <ProjectSelect class="mt-8" @selectId="getSelectPjId" />
     </div>
     <div class="grid grid-flow-col grid-cols-6 mt-8 gap-4">
