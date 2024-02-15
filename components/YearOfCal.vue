@@ -1,7 +1,7 @@
 <template>
   <div class="grid gap-4 grid-flow-row grid-rows-12 flex-1">
-    <div class="flex gap-4 w-full row-span-1 h-12">
-      <div class="flex h-full w-full gap-4">
+    <div class="flex gap-4 w-full row-span-1 h-12 justify-between">
+      <div class="flex h-full w-[80%] gap-4">
         <VaDateInput
           id="datetest"
           background="#fff"
@@ -16,7 +16,7 @@
           v-model="endtdate"
         />
       </div>
-      <Button buttonText="查詢" @click="findChart" class="w-20" />
+      <Button buttonText="查詢" @click="findChart" />
     </div>
 
     <div class="flex gap-4">

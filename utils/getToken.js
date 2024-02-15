@@ -40,13 +40,13 @@ export function getTokenFromLocal() {
           token = decryptedToken;
 
           //測試
-          // token = {
-          //   depId: "2",
-          //   expiration: "2024-01-31T11:04:09.604Z",
-          //   groupId: "DepManager",
-          //   staffId: "1120401",
-          //   userName: "部門經理",
-          // };
+          token = {
+            depId: "2",
+            expiration: "2024-01-31T11:04:09.604Z",
+            groupId: "DepManager",
+            staffId: "1120401",
+            userName: "部門經理",
+          };
 
           // token = {
           //   depId: "2",

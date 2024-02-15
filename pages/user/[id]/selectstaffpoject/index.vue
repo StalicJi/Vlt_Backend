@@ -23,7 +23,7 @@
       <ProjectInfoCard
         className="col-span-1"
         bgColorClass="bg-gray-500"
-        title="總花費時間 (小時)"
+        title="總花費時間(小時)"
         :cnt="totalHours"
       />
       <ProjectInfoCard className="col-span-2" title="客戶" :cnt="customer" />
@@ -36,7 +36,7 @@
       />
       <ProjectInfoCard
         className="col-start-4 col-end-6"
-        title="個人花費時數 (小時)"
+        title="個人花費時數(小時)"
         :cnt="personHoursTime"
       />
       <ProjectInfoCard

@@ -22,13 +22,13 @@
         />
         <ProjectInfoCard
           className="col-span-1"
-          title="總花費時間 (小時)"
+          title="總花費時間(小時)"
           :cnt="totalHours"
         />
         <ProjectInfoCard className="col-span-2" title="客戶" :cnt="customer" />
       </div>
 
-      <div class="my-4 border-t border-gray-300 flex-1 flex flex-col">
+      <div class="my-4 border-t border-gray-300 h-[40rem] flex flex-col">
         <div class="flex items-center">
           <div>
             <div class="py-2 text-rose-500">

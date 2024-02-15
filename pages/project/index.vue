@@ -18,7 +18,7 @@
       />
       <ProjectInfoCard
         className="col-span-1"
-        title="總花費時間 (小時)"
+        title="總花費時間(小時)"
         :cnt="totalHours"
       />
       <ProjectInfoCard className="col-span-2" title="客戶" :cnt="customer" />
@@ -31,7 +31,7 @@
             <th class="py-4">姓名</th>
             <th class="py-4">部門</th>
             <th class="py-4">職稱</th>
-            <th class="py-4">花費時間 (小時)</th>
+            <th class="py-4">花費時間(小時)</th>
           </tr>
         </thead>
         <tbody class="w-full">
