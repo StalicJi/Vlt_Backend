@@ -115,7 +115,6 @@ import PageTitle from "~/components/element/PageTitle.vue";
 import ProjectInfoCard from "~/components/element/ProjectInfoCard.vue";
 import Button from "~/components/element/Button.vue";
 import * as echarts from "echarts";
-import { checkPath } from "~/utils/routerControll";
 import { getTokenFromLocal } from "~/utils/getToken";
 
 export default {
@@ -149,35 +148,60 @@ export default {
       selectSTime: "",
       selectETime: "",
       filePjName: "",
-      projectManagerName: "",
+      projectManagerId: "",
+      userId: "",
+      userName: "",
+      groupId: "",
     };
   },
 
   mounted() {
-    this.getProjectSTime();
-    this.getProjectInfo(this.$route.params.id);
     this.getIdentify();
-    this.getProjectTitle();
-    this.startdate = null;
-    this.enddate = null;
-    this.hiddenAreaChart = !this.hiddenAreaChart;
-    this.hiddenWorkPieChart = !this.hiddenWorkPieChart;
-    this.$nextTick(() => {
-      this.initWorkPieChart();
+    this.getStaffId();
+    if (
+      ["DepManager", "GeneralManager", "ViceGeneralManager"].includes(
+        this.groupId
+      ) ||
+      this.userId === this.projectManagerId
+    ) {
+      this.getProjectSTime();
+      this.getProjectInfo(this.$route.params.id);
+      // console.log(this.projectManager);
+      this.getProjectTitle();
+      this.startdate = null;
+      this.enddate = null;
+      this.hiddenAreaChart = !this.hiddenAreaChart;
       this.hiddenWorkPieChart = !this.hiddenWorkPieChart;
-      this.hiddenEmploPieChart = !this.hiddenEmploPieChart;
       this.$nextTick(() => {
-        this.initEmploPieChart();
+        this.initWorkPieChart();
+        this.hiddenWorkPieChart = !this.hiddenWorkPieChart;
         this.hiddenEmploPieChart = !this.hiddenEmploPieChart;
-        this.hiddenAreaChart = !this.hiddenAreaChart;
+        this.$nextTick(() => {
+          this.initEmploPieChart();
+          this.hiddenEmploPieChart = !this.hiddenEmploPieChart;
+          this.hiddenAreaChart = !this.hiddenAreaChart;
+        });
       });
-    });
+    } else {
+      window.location.href = "/PjChart/404NotFound";
+    }
   },
 
   methods: {
+    getStaffId() {
+      const router = useRoute();
+      const parts = router.fullPath.split("/");
+      const userIdIndex = parts.indexOf("user") + 1;
+      const userId = userIdIndex >= 0 ? parts[userIdIndex] : null;
+      this.userId = userId;
+    },
+
     getIdentify() {
       const tokenObject = getTokenFromLocal();
-      this.projectManagerName = tokenObject.userName;
+      console.log(tokenObject);
+      this.projectManagerId = tokenObject.staffId;
+      this.userName = tokenObject.userName;
+      this.groupId = tokenObject.groupId;
     },
 
     findChart() {
@@ -300,7 +324,8 @@ export default {
         id: project_id,
       })
         .then((response) => {
-          // console.log(response);
+          const tokenObject = getTokenFromLocal();
+          console.log(tokenObject);
           if (response.status === 204) {
             this.projectManager = "無資料";
             this.projectStatus = "無資料";
@@ -309,10 +334,14 @@ export default {
             this.customer = "無資料";
           } else {
             this.projectManager = response.data.pm;
-            this.projectStatus = response.data.projectStatus;
-            this.projectType = response.data.projectType;
-            this.totalHours = response.data.totalHours;
-            this.customer = response.data.customer;
+            if (this.projectManager !== tokenObject.userName) {
+              window.location.href = "/PjChart/404NotFound";
+            } else {
+              this.projectStatus = response.data.projectStatus;
+              this.projectType = response.data.projectType;
+              this.totalHours = response.data.totalHours;
+              this.customer = response.data.customer;
+            }
           }
         })
         .catch((error) => {

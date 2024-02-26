@@ -45,12 +45,23 @@
         :cnt="personWorkType"
       />
     </div>
-    <div class="w-full flex justify-center mt-10" v-if="projectId">
-      <Button
-        buttonText="進階圖表"
-        btnColor="bg-rose-700"
-        @click="goAdvCharts(projectId)"
-      />
+    <div class="flex mt-10 gap-10 justify-center">
+      <div v-if="projectId">
+        <Button
+          :buttonText="
+            projectManager === projectManagerName ? '個人進階圖表' : '進階圖表'
+          "
+          btnColor="bg-rose-700"
+          @click="goAdvCharts(projectId)"
+        />
+      </div>
+      <div v-if="projectId && projectManager === projectManagerName">
+        <Button
+          buttonText="整體數據"
+          btnColor="bg-[#126992]"
+          @click="goManagerAdvCharts(projectId)"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -62,6 +73,7 @@ import PageTitle from "~/components/element/PageTitle.vue";
 import ProjectInfoCard from "~/components/element/ProjectInfoCard.vue";
 import Button from "~/components/element/Button.vue";
 import { checkPath } from "~/utils/routerControll";
+import { getTokenFromLocal } from "~/utils/getToken";
 
 export default {
   components: {
@@ -83,6 +95,7 @@ export default {
       personHoursTime: "-",
       personWorkType: "-",
       projectId: "",
+      projectManagerName: "",
     };
   },
 
@@ -94,9 +107,17 @@ export default {
     this.getStaffInfo();
     this.getPersonProjectStatus();
     this.getProjectInfo();
+
+    //專案管理人的整體數據btn條件
+    this.getIdentify();
   },
 
   methods: {
+    getIdentify() {
+      const tokenObject = getTokenFromLocal();
+      this.projectManagerName = tokenObject.userName;
+    },
+
     getStaffInfo() {
       API.post("ProjectAnalysis/PostStaffData", {
         Staffid: this.$route.params.id,
@@ -166,6 +187,10 @@ export default {
     goAdvCharts(pj_id) {
       //should reload next page to get params
       window.location.href = `/PjChart/user/${this.$route.params.id}/selectstaffpoject/${pj_id}`;
+    },
+
+    goManagerAdvCharts(pj_id) {
+      window.location.href = `/PjChart/user/${this.$route.params.id}/projectmanager/${pj_id}`;
     },
   },
 };

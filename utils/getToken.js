@@ -55,6 +55,14 @@ export function getTokenFromLocal() {
           //   staffId: "1010101",
           //   userName: "李國維",
           // };
+
+          // token = {
+          //   depId: "2",
+          //   expiration: "2024-01-31T11:04:09.604Z",
+          //   groupId: "sysUser",
+          //   staffId: "1111201",
+          //   userName: "邱育聖",
+          // };
         }
       }
     }
