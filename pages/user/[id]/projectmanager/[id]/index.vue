@@ -166,7 +166,6 @@ export default {
     ) {
       this.getProjectSTime();
       this.getProjectInfo(this.$route.params.id);
-      // console.log(this.projectManager);
       this.getProjectTitle();
       this.startdate = null;
       this.enddate = null;
@@ -198,7 +197,7 @@ export default {
 
     getIdentify() {
       const tokenObject = getTokenFromLocal();
-      console.log(tokenObject);
+      // console.log(tokenObject);
       this.projectManagerId = tokenObject.staffId;
       this.userName = tokenObject.userName;
       this.groupId = tokenObject.groupId;
@@ -325,13 +324,9 @@ export default {
       })
         .then((response) => {
           const tokenObject = getTokenFromLocal();
-          console.log(tokenObject);
+          // console.log(response.status);
           if (response.status === 204) {
-            this.projectManager = "無資料";
-            this.projectStatus = "無資料";
-            this.projectType = "無資料";
-            this.totalHours = "無資料";
-            this.customer = "無資料";
+            window.location.href = "/PjChart/errorSearch";
           } else {
             this.projectManager = response.data.pm;
             if (this.projectManager !== tokenObject.userName) {

@@ -7,7 +7,10 @@ export function checkPath() {
   const tokenObject = getTokenFromLocal();
 
   // 判斷是否攥改網址
-  if (tokenObject.groupId === "sysUser" && route.fullPath === "/PjChart") {
+  if (
+    (tokenObject.groupId === "sysUser" && route.fullPath === "/PjChart") ||
+    route.fullPath === "/PjChart/project"
+  ) {
     window.location.href = "/PjChart/404NotFound";
     // console.log(test_1);
     return;

@@ -132,6 +132,7 @@ export default {
       selectSTime: "",
       selectETime: "",
       projectName: "",
+      showWarning: false,
     };
   },
 
@@ -144,6 +145,7 @@ export default {
     this.getStaffInfo(this.userId);
     this.getProjectSTime(this.userId);
     this.getProjectInfo(this.$route.params.id);
+    this.getProjectDetail(this.$route.params.id);
     this.getProjectTitle();
     this.startdate = null;
     this.enddate = null;
@@ -320,11 +322,7 @@ export default {
       })
         .then((response) => {
           if (response.status === 204) {
-            this.projectManager = "無資料";
-            this.projectStatus = "無資料";
-            this.projectType = "無資料";
-            this.totalHours = "無資料";
-            this.customer = "無資料";
+            window.location.href = "/PjChart/errorSearch";
           } else {
             this.projectManager = response.data.pm;
             this.projectStatus = response.data.projectStatus;
@@ -339,6 +337,27 @@ export default {
           this.projectType = "-";
           this.totalHours = "-";
           this.customer = "-";
+          console.error(error);
+        });
+    },
+
+    getProjectDetail(project_id) {
+      API.post("/ProjectAnalysis/GetindividualProjectInformationPersonList", {
+        id: project_id,
+      })
+        .then((response) => {
+          const membersData = response.data;
+          const staffidnames = [];
+          membersData.forEach((data) => {
+            staffidnames.push(data.staffidname);
+          });
+
+          const tokenObject = getTokenFromLocal();
+          if (!staffidnames.includes(tokenObject.userName)) {
+            this.showWarning = true;
+          }
+        })
+        .catch((error) => {
           console.error(error);
         });
     },
@@ -383,6 +402,10 @@ export default {
           );
         })
         .catch((error) => console.error(error));
+    },
+
+    goBack(userId) {
+      window.location.href = `/PjChart/user/${userId}/selectstaffpoject`;
     },
 
     createAreaChart(projectId, userId, startDate, endDate) {

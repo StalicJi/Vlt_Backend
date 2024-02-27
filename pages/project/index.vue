@@ -66,6 +66,8 @@ import PageTitle from "../../components/element/PageTitle.vue";
 import Button from "../../components/element/Button.vue";
 import ProjectSelect from "~/components/ProjectSelect.vue";
 import ProjectInfoCard from "../../components/element/ProjectInfoCard.vue";
+import { checkPath } from "~/utils/routerControll";
+
 export default {
   components: {
     PageTitle,
@@ -84,6 +86,10 @@ export default {
       totalHours: "",
       customer: "",
     };
+  },
+
+  beforeMount() {
+    checkPath();
   },
 
   mounted() {

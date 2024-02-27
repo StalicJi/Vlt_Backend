@@ -45,22 +45,53 @@
         :cnt="personWorkType"
       />
     </div>
-    <div class="flex mt-10 gap-10 justify-center">
-      <div v-if="projectId">
-        <Button
-          :buttonText="
-            projectManager === projectManagerName ? '個人進階圖表' : '進階圖表'
-          "
-          btnColor="bg-rose-700"
-          @click="goAdvCharts(projectId)"
-        />
-      </div>
-      <div v-if="projectId && projectManager === projectManagerName">
-        <Button
-          buttonText="整體數據"
-          btnColor="bg-[#126992]"
-          @click="goManagerAdvCharts(projectId)"
-        />
+    <div class="flex flex-col mt-10 gap-10 justify-center">
+      <table
+        class="w-full"
+        v-if="projectId && projectManager === projectManagerName"
+      >
+        <thead class="w-full">
+          <tr class="text-center border-b-[1px] bg-gray-500 text-white">
+            <th class="py-4">員工編號</th>
+            <th class="py-4">姓名</th>
+            <th class="py-4">部門</th>
+            <th class="py-4">職稱</th>
+            <th class="py-4">花費時間(小時)</th>
+          </tr>
+        </thead>
+        <tbody class="w-full">
+          <tr
+            v-for="user in users"
+            :key="user.staffid"
+            class="text-center border-b-2 hover:bg-gray-200"
+          >
+            <td class="py-2">{{ user.staffid }}</td>
+            <td class="py-2">{{ user.staffidname }}</td>
+            <td class="py-2">{{ user.dep }}</td>
+            <td class="py-2">{{ user.job }}</td>
+            <td class="py-2">{{ user.hour }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="flex-center gap-10">
+        <div v-if="projectId">
+          <Button
+            :buttonText="
+              projectManager === projectManagerName
+                ? '個人進階圖表'
+                : '進階圖表'
+            "
+            btnColor="bg-rose-700"
+            @click="goAdvCharts(projectId)"
+          />
+        </div>
+        <div v-if="projectId && projectManager === projectManagerName">
+          <Button
+            buttonText="專案數據"
+            btnColor="bg-[#126992]"
+            @click="goManagerAdvCharts(projectId)"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -96,6 +127,7 @@ export default {
       personWorkType: "-",
       projectId: "",
       projectManagerName: "",
+      users: [],
     };
   },
 
@@ -107,6 +139,7 @@ export default {
     this.getStaffInfo();
     this.getPersonProjectStatus();
     this.getProjectInfo();
+    this.getProjectTeam();
 
     //專案管理人的整體數據btn條件
     this.getIdentify();
@@ -178,10 +211,27 @@ export default {
         });
     },
 
+    getProjectTeam(project_id) {
+      API.post("ProjectAnalysis/GetindividualProjectInformationPersonList", {
+        id: project_id,
+      })
+        .then((response) => {
+          if (response.status === 204) {
+            this.users = [];
+          } else {
+            this.users = response.data;
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+
     getSelectPjId(pj_id) {
       this.projectId = pj_id;
       this.getProjectInfo(this.projectId);
       this.getPersonProjectStatus(this.projectId);
+      this.getProjectTeam(this.projectId);
     },
 
     goAdvCharts(pj_id) {

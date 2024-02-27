@@ -115,7 +115,6 @@ import PageTitle from "~/components/element/PageTitle.vue";
 import ProjectInfoCard from "~/components/element/ProjectInfoCard.vue";
 import Button from "~/components/element/Button.vue";
 import * as echarts from "echarts";
-import { checkPath } from "~/utils/routerControll";
 import { getTokenFromLocal } from "~/utils/getToken";
 
 export default {
@@ -150,34 +149,45 @@ export default {
       selectETime: "",
       filePjName: "",
       projectManagerName: "",
+      groupId: "",
     };
   },
 
   mounted() {
-    this.getProjectSTime();
-    this.getProjectInfo(this.$route.params.id);
     this.getIdentify();
-    this.getProjectTitle();
-    this.startdate = null;
-    this.enddate = null;
-    this.hiddenAreaChart = !this.hiddenAreaChart;
-    this.hiddenWorkPieChart = !this.hiddenWorkPieChart;
-    this.$nextTick(() => {
-      this.initWorkPieChart();
+    console.log(this.groupId);
+    if (
+      !["DepManager", "GeneralManager", "ViceGeneralManager"].includes(
+        this.groupId
+      )
+    ) {
+      window.location.href = "/PjChart/404NotFound";
+    } else {
+      this.getProjectSTime();
+      this.getProjectInfo(this.$route.params.id);
+      this.getProjectTitle();
+      this.startdate = null;
+      this.enddate = null;
+      this.hiddenAreaChart = !this.hiddenAreaChart;
       this.hiddenWorkPieChart = !this.hiddenWorkPieChart;
-      this.hiddenEmploPieChart = !this.hiddenEmploPieChart;
       this.$nextTick(() => {
-        this.initEmploPieChart();
+        this.initWorkPieChart();
+        this.hiddenWorkPieChart = !this.hiddenWorkPieChart;
         this.hiddenEmploPieChart = !this.hiddenEmploPieChart;
-        this.hiddenAreaChart = !this.hiddenAreaChart;
+        this.$nextTick(() => {
+          this.initEmploPieChart();
+          this.hiddenEmploPieChart = !this.hiddenEmploPieChart;
+          this.hiddenAreaChart = !this.hiddenAreaChart;
+        });
       });
-    });
+    }
   },
 
   methods: {
     getIdentify() {
       const tokenObject = getTokenFromLocal();
       this.projectManagerName = tokenObject.userName;
+      this.groupId = tokenObject.groupId;
     },
 
     findChart() {
@@ -300,7 +310,6 @@ export default {
         id: project_id,
       })
         .then((response) => {
-          // console.log(response);
           if (response.status === 204) {
             this.projectManager = "無資料";
             this.projectStatus = "無資料";
